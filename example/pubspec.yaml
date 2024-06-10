@@ -1,0 +1,38 @@
+name: mindwave_mobile2_example
+description: "Demonstrates how to use the mindwave_mobile2 plugin."
+
+publish_to: "none"
+
+environment:
+  sdk: ">=3.2.6 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  mindwave_mobile2:
+    path: ../
+
+  cupertino_icons: ^1.0.2
+  firebase_core: ^2.27.0
+  cloud_firestore: ^4.15.8
+  rxdart: ^0.27.7
+  table_calendar: ^3.0.9
+
+dev_dependencies:
+  integration_test:
+    sdk: flutter
+  flutter_blue_plus:
+  fl_chart:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.0
+  firebase_auth: ^4.16.0
+  firebase_storage: ^11.6.1
+  shared_preferences: ^2.2.2
+  local_auth: ^2.2.0
+  flutter_locales: ^3.0.1
+
+flutter:
+  uses-material-design: true

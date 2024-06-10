@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "898473273381",
+    "project_id": "test-4fa40",
+    "storage_bucket": "test-4fa40.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:898473273381:android:4d03d8e562821996fdb7cc",
+        "android_client_info": {
+          "package_name": "org.mindwave.mindwave_mobile2_example"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCpW7Nb9WS07zVcuKjwqahZhH3DOwcQbsE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
