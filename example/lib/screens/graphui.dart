@@ -8,8 +8,13 @@ class LiveGraph extends StatefulWidget {
   final List<int> op;
   final int length;
 
-  LiveGraph({Key? key, required this.dataStream, required this.op , required this.length}) : super(key: key);
 
+  LiveGraph(
+      {Key? key,
+      required this.dataStream,
+      required this.op,
+      required this.length})
+      : super(key: key);
 
   @override
   _LiveGraphState createState() => _LiveGraphState();
@@ -18,25 +23,27 @@ class LiveGraph extends StatefulWidget {
 class _LiveGraphState extends State<LiveGraph> {
   final List<FlSpot> _dataPoints = [];
   double _xValue = 0;
+  int meanval=0;
 
   @override
   void initState() {
     super.initState();
+
     widget.dataStream.listen((data) {
-    
-        _xValue += 1;
-        _dataPoints.add(FlSpot(_xValue, data.toDouble()));
-        if (_dataPoints.length > 10) {
-          _dataPoints.removeAt(0);
-        }
-      
+      _xValue += 1;
+
+      _dataPoints.add(FlSpot(_xValue, data.toDouble()));
+      if (_dataPoints.length > 10) {
+        _dataPoints.removeAt(0);
+      }
     });
+
   }
-    Widget myapp(BuildContext context, String title, Stream<int> stream) {
+
+  Widget myapp(BuildContext context, String title, Stream<int> stream) {
     return StreamBuilder<int>(
         stream: stream,
         builder: (context, snapshot) {
-         
           return Column(
             children: [
               Text(title, style: Theme.of(context).textTheme.bodyLarge),
@@ -46,20 +53,22 @@ class _LiveGraphState extends State<LiveGraph> {
           );
         });
   }
-  Widget calmeanval(List<int> data){
-    int mean=0;
-   for(int i=0;i<data.length;i++){
-    mean+=data[i];
-   }
-    return Text("Your mean : ${mean/data.length} ");
 
-  }
+  // void calmeanval(List<int> data) {
+  //   int mean = 0;
+  //   for (int i = 0; i < data.length; i++) {
+  //     mean += data[i];
+  //   }
+  //   double val= mean/data.length;
+  //   setState(() {
+  //    meanval = val.toInt();
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        
         Container(
           height: 200, // Adjust this value to make the graph vertically smaller
           child: LineChart(
@@ -67,7 +76,6 @@ class _LiveGraphState extends State<LiveGraph> {
               minY: 0,
               maxY: 100,
               lineBarsData: [
-                
                 LineChartBarData(
                   spots: _dataPoints,
                   isCurved: true,
@@ -95,24 +103,26 @@ class _LiveGraphState extends State<LiveGraph> {
                     },
                   ),
                 ),
-                topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                topTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                rightTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                bottomTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
               ),
               borderData: FlBorderData(show: true),
               gridData: FlGridData(show: true),
               lineTouchData: LineTouchData(
                 touchTooltipData: LineTouchTooltipData(),
                 handleBuiltInTouches: true,
-
               ),
             ),
           ),
         ),
-        if(widget.op.length<=widget.length)
-        Text("Your session data : ${widget.op}"),
-        if(widget.op.length==widget.length)
-        calmeanval(widget.op),
+        if (widget.op.length < widget.length)
+          Text("Your session data : ${widget.op}"),
+         
+      
       ],
     );
   }
