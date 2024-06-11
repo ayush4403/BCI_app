@@ -11,104 +11,162 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height * 0.53;
-
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text('Profile'),
+        backgroundColor: Colors.black,
+        title: const Text('Profile', style: TextStyle(color: Colors.white)),
+        iconTheme: const IconThemeData(
+            color: Colors.white), // Set the back icon color to white
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(10.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Profile Picture and Name
-              CircleAvatar(
-                radius: 50,
-                backgroundImage: AssetImage(
-                    'assets/profile_picture.png'), // Replace with your image asset
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Cerbotech',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 32),
-              // PageView taking half of the screen height
-              SizedBox(
-                height: screenHeight,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                  child: PageView(
-                    children: const [
-                      // Replace these containers with your desired screens or widgets
-                      CalendarScreen(),
-                    ],
+              // Profile Picture, Name, and Calendar Icon in a Row
+              Row(
+                children: [
+                  const SizedBox(width: 10),
+                  // Profile Picture
+                  const CircleAvatar(
+                    radius: 35,
+                    backgroundImage: AssetImage(
+                        'assets/device.jpg'), // Replace with your image asset
                   ),
-                ),
+                  // Name
+                  const SizedBox(width: 20),
+                  const Text(
+                    'Cerbotech',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(width: 80),
+                  // Calendar Icon with Circular Background
+                  Container(
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color:
+                          Colors.white, // Background color for the circle
+                    ),
+                    padding:
+                        const EdgeInsets.all(3.0), // Padding inside the circle
+                    child: IconButton(
+                      icon: Icon(Icons.calendar_today,
+                          color: Colors.grey[800], size: 30),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const CalendarScreen()),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(height: 32),
+              const SizedBox(height: 32),
               // Sessions Tile
               Card(
+                color: Colors.black,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                elevation: 0,
                 child: ListTile(
-                  leading: Icon(Icons.access_time),
-                  title: Text('Your Sessions'),
-                  subtitle: Text('Details about your sessions'),
-                  trailing: IconButton(
-                    icon: Icon(Icons.arrow_forward_ios),
-                    onPressed: () {
-                      // Handle button tap
-                    },
+                  leading: const Icon(Icons.access_time, color: Colors.white),
+                  title: const Text('Your Sessions',
+                      style: TextStyle(color: Colors.white)),
+                  subtitle: const Text('Details about your sessions',
+                      style: TextStyle(color: Colors.white70)),
+                  trailing: const Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.white,
+                    size: 20,
                   ),
+                  onTap: () {
+                    // Handle tile tap
+                  },
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               // Graph Tile
               Card(
+                color: Colors.black,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                elevation: 0,
                 child: ListTile(
-                  leading: Icon(Icons.show_chart),
-                  title: Text('Progress Graph'),
-                  subtitle: Text('Your meditation progress'),
-                  trailing: IconButton(
-                    icon: Icon(Icons.arrow_forward_ios),
-                    onPressed: () {
-                      // Handle button tap
-                    },
+                  leading: const Icon(Icons.show_chart, color: Colors.white),
+                  title: const Text('Progress Graph',
+                      style: TextStyle(color: Colors.white)),
+                  subtitle: const Text('Your meditation progress',
+                      style: TextStyle(color: Colors.white70)),
+                  trailing: const Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.white,
+                    size: 20,
                   ),
+                  onTap: () {
+                    // Handle tile tap
+                  },
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               // Level of Meditation Tile
               Card(
+                color: Colors.black,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                elevation: 0,
                 child: ListTile(
-                  leading: Icon(Icons.star),
-                  title: Text('Level of Meditation'),
-                  subtitle: Text('Your current meditation level'),
-                  trailing: IconButton(
-                    icon: Icon(Icons.arrow_forward_ios),
-                    onPressed: () {
-                      // Handle button tap
-                    },
+                  leading: const Icon(Icons.star, color: Colors.white),
+                  title: const Text('Level of Meditation',
+                      style: TextStyle(color: Colors.white)),
+                  subtitle: const Text('Your current meditation level',
+                      style: TextStyle(color: Colors.white70)),
+                  trailing: const Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.white,
+                    size: 20,
                   ),
+                  onTap: () {
+                    // Handle tile tap
+                  },
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               // Additional Tile
               Card(
+                color: Colors.black,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                elevation: 0,
                 child: ListTile(
-                  leading: Icon(Icons.more_horiz),
-                  title: Text('More Info'),
-                  subtitle: Text('Additional information'),
-                  trailing: IconButton(
-                    icon: Icon(Icons.forward),
-                    onPressed: () {
-                      // Handle button tap
-                    },
+                  leading: const Icon(Icons.more_horiz, color: Colors.white),
+                  title: const Text(
+                    'More Info',
+                    style: TextStyle(color: Colors.white),
                   ),
+                  subtitle: const Text(
+                    'Additional information',
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                  trailing: const Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  onTap: () {
+                    // Handle tile tap
+                  },
                 ),
               ),
             ],
@@ -120,7 +178,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 }
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: ProfileScreen(),
   ));
 }

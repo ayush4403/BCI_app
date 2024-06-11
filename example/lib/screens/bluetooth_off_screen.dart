@@ -21,7 +21,7 @@ class BluetoothOffScreen extends StatelessWidget {
   Widget buildTitle(BuildContext context) {
     String? state = adapterState?.toString().split(".").last;
     return Text(
-      'Bluetooth Adapter is ${state ?? 'not available'}',
+      'Your Bluetooth is ${state ?? 'not available'}',
       style: Theme.of(context)
           .primaryTextTheme
           .titleSmall
@@ -30,30 +30,33 @@ class BluetoothOffScreen extends StatelessWidget {
   }
 
   Widget buildTurnOnButton(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: ElevatedButton(
-        child: const Text('TURN ON'),
-        onPressed: () async {
-          try {
-            if (Platform.isAndroid) {
-              await FlutterBluePlus.turnOn();
-            }
-          } catch (e) {
-            if (context.mounted) {
-              showSnackBarPopup(
-                  context: context, text: e.toString(), color: Colors.red);
-            }
-          }
-        },
+  return Padding(
+    padding: const EdgeInsets.all(20.0),
+    child: ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.blue, // Set background color to blue
       ),
-    );
-  }
+      onPressed: () async {
+        try {
+          if (Platform.isAndroid) {
+            await FlutterBluePlus.turnOn();
+          }
+        } catch (e) {
+          if (context.mounted) {
+            showSnackBarPopup(
+                context: context, text: e.toString(), color: Colors.red);
+          }
+        }
+      },
+      child: const Text('TURN ON', style: TextStyle(color: Colors.white)),
+    ),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.lightBlue,
+      backgroundColor: Colors.black,
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,

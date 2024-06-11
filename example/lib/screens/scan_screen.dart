@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:mindwave_mobile2/mindwave_mobile2.dart';
+import 'package:mindwave_mobile2_example/screens/custom_scan_button.dart';
 import 'package:mindwave_mobile2_example/screens/graphui.dart';
 import 'package:mindwave_mobile2_example/screens/morning.dart';
 import 'package:mindwave_mobile2_example/screens/profile.dart';
+import 'package:mindwave_mobile2_example/screens/buffer_screen.dart'; // Ensure you have this import
 
 import '../util/snackbar_popup.dart';
 import 'device_screen.dart';
@@ -30,20 +32,19 @@ class _ScanScreenState extends State<ScanScreen> {
     super.initState();
 
     _scanResultsSubscription = FlutterBluePlus.scanResults.listen((results) {
-      _scanResults = results;
-      print(": type: ${results.runtimeType}");
-      if (mounted) {
-        setState(() {});
+      if (results.isNotEmpty) {
+        _scanResults = results;
+        if (mounted) {
+          setState(() {});
+          Navigator.of(context)
+              .popUntil((route) => route.isFirst); // Pop to the first screen
+        }
       }
     }, onError: (e) {
       showSnackBarPopup(
           context: context, text: e.toString(), color: Colors.red);
-    });
-
-    _isScanningSubscription = FlutterBluePlus.isScanning.listen((state) {
-      _isScanning = state;
-      if (mounted) {
-        setState(() {});
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop(); // Pop the BufferScreen on error
       }
     });
   }
@@ -58,20 +59,23 @@ class _ScanScreenState extends State<ScanScreen> {
   Future onScanPressed() async {
     try {
       await FlutterBluePlus.startScan(timeout: const Duration(seconds: 15));
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => const BufferScreen()));
     } catch (e) {
       if (context.mounted) {
         showSnackBarPopup(
             context: context, text: e.toString(), color: Colors.red);
       }
     }
-    if (mounted) {
-      setState(() {});
-    }
   }
 
   Future onStopPressed() async {
     try {
-      FlutterBluePlus.stopScan();
+      await FlutterBluePlus.stopScan();
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context)
+            .pop(); // Ensure to pop the BufferScreen if manually stopping the scan
+      }
     } catch (e) {
       if (context.mounted) {
         showSnackBarPopup(
@@ -99,7 +103,7 @@ class _ScanScreenState extends State<ScanScreen> {
   }
 
   Future onRefresh() {
-    if (_isScanning == false) {
+    if (!_isScanning) {
       FlutterBluePlus.startScan(timeout: const Duration(seconds: 15));
     }
     if (mounted) {
@@ -108,20 +112,23 @@ class _ScanScreenState extends State<ScanScreen> {
     return Future.delayed(const Duration(milliseconds: 500));
   }
 
-  Widget buildScanButton(BuildContext context) {
-    if (FlutterBluePlus.isScanningNow) {
-      return ElevatedButton(
-        onPressed: onStopPressed,
-        style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(Colors.red),
-        ),
-        child: const Icon(Icons.stop),
-      );
-    } else {
-      return ElevatedButton(
-          onPressed: onScanPressed, child: const Text("SCAN"));
-    }
-  }
+  // Widget buildScanButton(BuildContext context) {
+  //   if (_isScanning) {
+  //     return ElevatedButton(
+  //       onPressed: onStopPressed,
+  //       style: ButtonStyle(
+  //         backgroundColor: MaterialStateProperty.all(Colors.red),
+  //       ),
+  //       child: const Icon(Icons.stop),
+  //     );
+  //   } else {
+  //     return ElevatedButton(
+  //       style: ElevatedButton.styleFrom(
+  //       backgroundColor: Colors.blue, // Set background color to blue
+  //     ),
+  //         onPressed: onScanPressed, child: const Text("SCAN", style:TextStyle(color: Colors.white)));
+  //   }
+  // }
 
   List<Widget> _buildScanResultTiles(BuildContext context) {
     return _scanResults.map((r) {
@@ -139,12 +146,25 @@ class _ScanScreenState extends State<ScanScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black87,
       appBar: AppBar(
-        title: const Text('Bluetooth Devices'),
+        backgroundColor: Colors.black,
+        title: const Text(
+          'Bluetooth Devices',
+          style: TextStyle(color: Colors.white),
+        ),
         actions: [
-          IconButton(onPressed: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
-          }, icon: const Icon(Icons.forward)),
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ProfileScreen()));
+              },
+              icon: const Icon(
+                Icons.person,
+                color: Colors.white,
+              )),
         ],
       ),
       body: RefreshIndicator(
@@ -157,7 +177,9 @@ class _ScanScreenState extends State<ScanScreen> {
       ),
       floatingActionButton: Align(
         alignment: Alignment.center,
-        child: buildScanButton(context),
+        child: CustomScanButton(
+          onPressed: _isScanning ? onStopPressed : onScanPressed,
+        ),
       ),
     );
   }
