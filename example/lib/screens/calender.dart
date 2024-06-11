@@ -3,6 +3,7 @@
 // ignore_for_file: unused_field, avoid_print
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+// ignore: depend_on_referenced_packages
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
@@ -117,7 +118,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-    
+      appBar: AppBar(
+        title: const Text('Progress'),
+        backgroundColor: Colors.blue,
+      ),
       backgroundColor: Colors.white,
       body: TableCalendar(
         firstDay: DateTime(2024),
@@ -128,22 +132,22 @@ class _CalendarScreenState extends State<CalendarScreen> {
         rowHeight: 60,
         daysOfWeekHeight: 60,
         headerStyle: HeaderStyle(
-          titleTextStyle: TextStyle(
+          titleTextStyle: const TextStyle(
             color: Colors.blue,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
-          formatButtonTextStyle: TextStyle(color: Colors.black),
+          formatButtonTextStyle: const TextStyle(color: Colors.black),
           formatButtonDecoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: Colors.blue, width: 2),
               shape: BoxShape.rectangle),
-          leftChevronIcon: Icon(
+          leftChevronIcon: const Icon(
             Icons.arrow_back,
             color: Colors.black,
             size: 24,
           ),
-          rightChevronIcon: Icon(
+          rightChevronIcon: const Icon(
             Icons.arrow_forward,
             color: Colors.black,
             size: 24,

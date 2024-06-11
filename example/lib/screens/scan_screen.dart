@@ -4,13 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:mindwave_mobile2/mindwave_mobile2.dart';
 import 'package:mindwave_mobile2_example/screens/custom_scan_button.dart';
-import 'package:mindwave_mobile2_example/screens/graphui.dart';
 import 'package:mindwave_mobile2_example/screens/morning.dart';
 import 'package:mindwave_mobile2_example/screens/profile.dart';
 import 'package:mindwave_mobile2_example/screens/buffer_screen.dart'; // Ensure you have this import
 
 import '../util/snackbar_popup.dart';
-import 'device_screen.dart';
 import '../widgets/scan_result_tile.dart';
 
 class ScanScreen extends StatefulWidget {
@@ -146,12 +144,11 @@ class _ScanScreenState extends State<ScanScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black87,
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.blue,
         title: const Text(
           'Bluetooth Devices',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.black),
         ),
         actions: [
           IconButton(
@@ -163,7 +160,7 @@ class _ScanScreenState extends State<ScanScreen> {
               },
               icon: const Icon(
                 Icons.person,
-                color: Colors.white,
+                color: Colors.black,
               )),
         ],
       ),

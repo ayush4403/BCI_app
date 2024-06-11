@@ -19,7 +19,9 @@ class BufferScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Image.asset(
-                'assets/device.jpg'), // Ensure you have this image in your assets
+                'assets/mindwave.jpg',
+                height: 250,
+                ), // Ensure you have this image in your assets
             const SizedBox(height: 20),
             const Text('Scanning...',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
