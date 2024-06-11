@@ -2,7 +2,9 @@
     <application
         android:label="mindwave_mobile2_example"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+       
+        >
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -43,6 +45,7 @@
     <!-- legacy for Android 11 or lower -->
     <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- legacy for Android 9 or lower -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" android:maxSdkVersion="28" />

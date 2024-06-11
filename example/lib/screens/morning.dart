@@ -46,12 +46,19 @@ class _MorningMeditationState extends State<MorningMeditation> {
       if (state == HeadsetState.DISCONNECTED) {
         headset.disconnect();
       }
+         if (mounted) {
+        setState(() {});
+       
+      }
     });
 
     _algoStateReasonSubscription =
         headset.onAlgoStateReasonChange().listen((state) {
       _algoState = state['State'];
       _algoReason = state['Reason'];
+         if (mounted) {
+        setState(() {});
+      }
     });
   }
 
@@ -117,32 +124,33 @@ class _MorningMeditationState extends State<MorningMeditation> {
 
   //   _isTimerRunning = true;
   // }
-  double sum=0;
-  double avg=0;
+  double sum = 0;
+  double avg = 0;
+  bool start = false;
   void _startListeningToMeditationStream(Stream<int> stream) {
     _meditationStreamSubscription = stream.listen((data) {
-      if (data > 5) {
+      if (data > 5 && start == false) {
         f = true;
-_startSession();
-        // _startTimer();
+        _startSession();
       }
 
       if (f && ok == 0) {
         print("Your stream is started : ${data} at $c");
         fixedSizeList[c] = data;
-        sum=data+sum;
+        sum = data + sum;
+        start = true;
         c++;
       }
 
       if (c == fixedSizeList.length) {
         f = false;
         ok = 1;
+        
+        _stopSession();
+        setState(() {
         _isdataadded = true;
-          _stopSession();
-          setState(() {
-            
-          avg=sum/fixedSizeList.length;
-          });
+          avg = sum / fixedSizeList.length;
+        });
 
         _meditationStreamSubscription?.cancel();
         headset.disconnect();
@@ -221,24 +229,26 @@ _startSession();
           }
         });
   }
+
   void _startSession() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => const AlertDialog(
         content: Text("Your session has been started!"),
         actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text("OK"),
-          ),
+          
         ],
       ),
     );
-
+    Timer(const Duration(seconds: 1), () {
+    Navigator.of(context).pop();
+  });
   }
-    void _stopSession() {
+  Widget displayavg(double avg){
+    return Text("Average: $avg");
+  }
+
+  void _stopSession() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -253,9 +263,7 @@ _startSession();
         ],
       ),
     );
-
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -266,23 +274,16 @@ _startSession();
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.06,
           ),
-          Row(
+           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElevatedButton(
-                onPressed: isWorking ? onDisconnectPressed : onConnectPressed,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: isWorking ? Colors.red : Colors.green,
-                ),
-                child: Text(isWorking ? 'Disconnect' : 'Connect'),
-              ),
+         buildConnectButton(context),
             ],
           ),
           const Divider(height: 20, color: Colors.black),
           buildStateWidget(context),
           ElevatedButton(
             onPressed: () {
-              
               setState(() {
                 showgraph = true;
               });
@@ -294,6 +295,9 @@ _startSession();
           ),
           if (showgraph)
             graph(context, "Meditation", headset.onAlgoMeditationUpdate()),
+            SizedBox(height: 30),
+            if(_isdataadded)
+            displayavg(avg)
         ],
       ),
     );
