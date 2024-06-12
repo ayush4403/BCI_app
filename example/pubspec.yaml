@@ -20,6 +20,7 @@ dependencies:
   table_calendar: ^3.0.9
   lottie: ^3.1.2
   flutter_svg: ^2.0.10+1
+  audioplayers: ^5.2.1
 
 dev_dependencies:
   integration_test:
@@ -37,7 +38,10 @@ dev_dependencies:
   flutter_locales: ^3.0.1
 
 flutter:
-  uses-material-design: true
-
   assets:
-  - assets/
+    - assets/
+    - assets/Visualize_1.mp3
+    - assets/B-BALANCE_BRAIN_AND_BODY.mp3
+    - assets/guided_1.mp3
+
+  uses-material-design: true

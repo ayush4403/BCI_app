@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mindwave_mobile2_example/screens/calender.dart';
 import 'package:mindwave_mobile2_example/screens/graphhome.dart';
+import 'package:mindwave_mobile2_example/screens/home.dart';
 import 'package:mindwave_mobile2_example/screens/session.dart';
 
 class ProfileScreen extends StatefulWidget {
