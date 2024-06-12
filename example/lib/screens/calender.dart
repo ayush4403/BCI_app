@@ -1,15 +1,8 @@
-
-
-// ignore_for_file: unused_field, avoid_print
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'dart:math';
 
 class CalendarScreen extends StatefulWidget {
-
   const CalendarScreen({super.key});
 
   @override
@@ -20,104 +13,27 @@ class _CalendarScreenState extends State<CalendarScreen> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  Map<DateTime, bool> dayStatus = {};
 
-  final List<String> activities = [
-    'Morning Meditation', //1
-    'Night Music', //2
-    'Mental Marathon', //4
-    'Sherlock Holmes', //5
-  ];
-
-  final List<String> fetchedname = [
-    'MeditationData',
-    'NightMusicData',
-    'mentalmarathon',
-    'sherlockholmes'
-  ];
-  final List<String> fetchedday = [
-    'MeditationDataforday',
-    'NightDataforday',
-    'mentalmarathondata',
-    'sherlockdata'
-  ];
+  final Map<DateTime, Color> _highlightedDates = {};
 
   @override
   void initState() {
     super.initState();
-    fetchWeekData("nodtaa").listen((data) {
-      setState(() {
-        dayStatus = data.map((key, value) {
-          final date = DateTime(key.year, key.month, key.day);
-          return MapEntry(date, value);
-        });
-      });
-    });
+    _generateHighlightedDates();
   }
 
-  Stream<Map<DateTime, bool>> fetchWeekData(String name) {
-    final User? user = FirebaseAuth.instance.currentUser;
-    String databasename = '';
-    String databasepath = '';
-    for (int i = 0; i < activities.length; i++) {
-      if (name == activities[i]) {
-        databasename = fetchedname[i];
-        databasepath = fetchedday[i];
-      }
+  void _generateHighlightedDates() {
+    final random = Random();
+    final colors = [Colors.red, Colors.blue, Colors.green, Colors.yellow];
+    for (int i = 1; i <= 11; i++) {
+      final date = DateTime(2024, 6, i);
+      _highlightedDates[date] = colors[random.nextInt(colors.length)];
     }
-    if (user == null) {
-      return Stream.value({});
-    }
-    return FirebaseFirestore.instance
-        .collection('Users')
-        .doc(user.uid)
-        .collection(databasepath)
-        .doc('currentweekandday')
-        .snapshots()
-        .switchMap((snapshot) {
-      if (!snapshot.exists) {
-        return Stream.value({});
-      }
-
-      return FirebaseFirestore.instance
-          .collection('Users')
-          .doc(user.uid)
-          .collection(databasename)
-          .doc('data')
-          .snapshots()
-          .map((dataSnapshot) {
-        final weekSnapshot = dataSnapshot.data();
-        print("Your data: $weekSnapshot");
-        final Map<DateTime, bool> dayStatus = {};
-        if (weekSnapshot != null) {
-          weekSnapshot.forEach((key, value) {
-            if (key.startsWith('day')) {
-              print("value ${value.runtimeType}");
-              if (value is List<dynamic>) {
-                final dayData = value as dynamic;
-                final date = (dayData[2] as Timestamp).toDate();
-                final status = dayData[1] as bool;
-                final dateOnly = DateTime(date.year, date.month, date.day);
-                dayStatus[dateOnly] = status;
-              } else {
-                final dayData = value as dynamic;
-                final date = (dayData['TimeStamp'] as Timestamp).toDate();
-                final status = dayData['done'] as bool;
-                final dateOnly = DateTime(date.year, date.month, date.day);
-                dayStatus[dateOnly] = status;
-              }
-            }
-          });
-        }
-        return dayStatus;
-      });
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-    
       backgroundColor: Colors.white,
       body: TableCalendar(
         firstDay: DateTime(2024),
@@ -173,13 +89,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
         calendarBuilders: CalendarBuilders(
           defaultBuilder: (context, date, _) {
             final dateOnly = DateTime(date.year, date.month, date.day);
-            if (dayStatus.containsKey(dateOnly)) {
-              bool status = dayStatus[dateOnly]!;
+            if (_highlightedDates.containsKey(dateOnly)) {
               return Container(
                 margin: const EdgeInsets.all(6.0),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: status ? Colors.blue : null,
+                  color: _highlightedDates[dateOnly],
                   shape: BoxShape.circle,
                 ),
                 child: Text(
@@ -188,20 +103,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 ),
               );
             }
-            return null;
+            return Container(
+              margin: const EdgeInsets.all(6.0),
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(
+                color: Colors.blue,
+                shape: BoxShape.circle,
+              ),
+              child: Text(
+                '${date.day}',
+                style: const TextStyle(color: Colors.white),
+              ),
+            );
           },
         ),
-        // onDaySelected: (selectedDay, focusedDay) {
-        //   if (!isSameDay(_selectedDay, selectedDay)) {
-        //     setState(() {
-        //       _selectedDay = selectedDay;
-        //       _focusedDay = focusedDay;
-        //     });
-        //   }
-        // },
-        // selectedDayPredicate: (day) {
-        //   return isSameDay(_selectedDay, day);
-        // },
         onFormatChanged: (format) {
           if (_calendarFormat != format) {
             setState(() {

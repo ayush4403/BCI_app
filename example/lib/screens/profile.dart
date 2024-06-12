@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mindwave_mobile2_example/screens/calender.dart';
-import 'package:mindwave_mobile2_example/screens/graphhome.dart';
 import 'package:mindwave_mobile2_example/screens/home.dart';
+import 'package:mindwave_mobile2_example/screens/logs.dart';
 import 'package:mindwave_mobile2_example/screens/session.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -79,7 +79,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   trailing: IconButton(
                     icon: Icon(Icons.arrow_forward_ios),
                     onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=> GraphSelectorScreen()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=> MyApp1n()));
                     },
                   ),
                 ),

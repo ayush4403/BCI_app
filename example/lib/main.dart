@@ -53,6 +53,7 @@ class _MyAppState extends State<MyApp> {
       color: Colors.lightBlue,
       home: screen,
       navigatorObservers: [BluetoothAdapterStateObserver()],
+      theme: ThemeData.dark(),
     );
   }
 }
