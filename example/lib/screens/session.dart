@@ -60,7 +60,8 @@ class _SessionScreenState extends State<SessionScreen> {
                         _isTodaySession
                             ? 'Today\'s Session: $_totalTodaySession Sessions Time:  $_totalTodayTime minutes'
                             : 'Total Session: $_totalSession \n Time: $_totalTime  minutes',
-                        style: const TextStyle(fontSize: 18),
+                        style:
+                            const TextStyle(fontSize: 18, color: Colors.white),
                       ),
                     ],
                   ),

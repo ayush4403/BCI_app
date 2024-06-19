@@ -14,17 +14,23 @@ class BufferScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Image.asset(
-                'assets/mindwave.jpg',
-                height: 250,
-                ), // Ensure you have this image in your assets
+              'assets/mindwave.jpg',
+              height: 250,
+            ), // Ensure you have this image in your assets
             const SizedBox(height: 20),
-            const Text('Scanning...',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const Text(
+              'Scanning...',
+              style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black),
+            ),
             const SizedBox(height: 20),
             TextButton(
               onPressed: () => _onCancelPressed(context),

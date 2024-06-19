@@ -99,7 +99,7 @@ class _LiveGraphState extends State<LiveGraph> {
                     getTitlesWidget: (value, meta) {
                       return Text(
                         value.toInt().toString(),
-                        style: const TextStyle(color: Colors.black),
+                        style: TextStyle(color: Colors.white),
                       );
                     },
                   ),

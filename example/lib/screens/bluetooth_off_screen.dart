@@ -30,27 +30,28 @@ class BluetoothOffScreen extends StatelessWidget {
   }
 
   Widget buildTurnOnButton(BuildContext context) {
-  return Padding(
-    padding: const EdgeInsets.all(20.0),
-    child: ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.blue, // Set background color to blue
-      ),
-      onPressed: () async {
-        try {
-          if (Platform.isAndroid) {
-            await FlutterBluePlus.turnOn();
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue, // Set background color to blue
+        ),
+        onPressed: () async {
+          try {
+            if (Platform.isAndroid) {
+              await FlutterBluePlus.turnOn();
+            }
+          } catch (e) {
+            if (context.mounted) {
+              showSnackBarPopup(
+                  context: context, text: e.toString(), color: Colors.red);
+            }
           }
-        } catch (e) {
-          if (context.mounted) {
-            showSnackBarPopup(
-                context: context, text: e.toString(), color: Colors.red);
-          }
-        }
-      },
-      child: const Text('TURN ON', style: TextStyle(color: Colors.white)),
-    ),
-  );
+        },
+        child: const Text('TURN ON', style: TextStyle(color: Colors.white)),
+      )
+    );
+    
 }
 
   @override

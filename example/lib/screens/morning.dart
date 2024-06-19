@@ -1,22 +1,21 @@
 import 'dart:async';
+import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:flutter/material.dart';
 import 'package:mindwave_mobile2/enums/algo_state_reason.dart';
 import 'package:mindwave_mobile2/enums/headset_state.dart';
 import 'package:mindwave_mobile2/mindwave_mobile2.dart';
-import 'package:mindwave_mobile2_example/screens/graphalpha.dart';
-import 'package:mindwave_mobile2_example/screens/graphui.dart';
-<<<<<<< HEAD
-=======
-import 'package:mindwave_mobile2_example/screens/music.dart';
+
 import 'package:mindwave_mobile2_example/screens/profile.dart';
->>>>>>> 92c625ecc396085a20d80f1977f2c9163726baf8
+
 import 'package:mindwave_mobile2_example/util/snackbar_popup.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class MorningMeditation extends StatefulWidget {
   final bool audiostatus;
   final String? audiofile;
-  const MorningMeditation({super.key,required this.audiostatus, required this.audiofile});
+  final int value;
+  const MorningMeditation(
+      {super.key, required this.audiostatus, required this.audiofile, required this.value});
 
   @override
   State<MorningMeditation> createState() => _MorningMeditationState();
@@ -26,48 +25,65 @@ class _MorningMeditationState extends State<MorningMeditation> {
   bool isConnected = false;
   final MindwaveMobile2 headset = MindwaveMobile2();
   HeadsetState _headsetState = HeadsetState.DISCONNECTED;
-  // ignore: unused_field
-  AlgoState _algoState = AlgoState.INITED;
-  // ignore: unused_field
-  AlgoReason _algoReason = AlgoReason.SIGNAL_QUALITY;
+  //AlgoState _algoState = AlgoState.INITED;
+  //AlgoReason _algoReason = AlgoReason.SIGNAL_QUALITY;
   int dataunits = 0;
 
   late StreamSubscription<HeadsetState>? _headsetStateSubscription;
   late StreamSubscription<Map>? _algoStateReasonSubscription;
   StreamSubscription<int>? _meditationStreamSubscription;
   late Timer _timer;
-  // ignore: unused_field, prefer_final_fields
-  bool _isTimerRunning = false;
-  bool _isdataadded = false;
+
   int c = 0;
   bool f = false;
   int ok = 0;
-  List<int> fixedSizeList = List.filled(300, 0);
   bool showgraph = false;
- int sessionval=1;
+  int sessionval = 1;
+  bool showtimerandmusic = false;
+  List<int> fixedSizeList = List.filled(40, 0);
+  int seconds = 5 * 60;
+  late Timer timer;
+
+  void startTimer() {
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (seconds > 0) {
+        setState(() {
+          seconds--;
+        });
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  void stopTimer() {
+    timer.cancel();
+  }
+
   @override
   void initState() {
     super.initState();
     _headsetStateSubscription = headset.onStateChange().listen((state) {
+  
+  print("Your session time is : ${widget.value}");
       _headsetState = state;
       if (state == HeadsetState.DISCONNECTED) {
         headset.disconnect();
       }
-         if (mounted) {
+      if (mounted) {
         setState(() {});
-       
       }
     });
 
-    _algoStateReasonSubscription =
-        headset.onAlgoStateReasonChange().listen((state) {
-      _algoState = state['State'];
-      _algoReason = state['Reason'];
-         if (mounted) {
-        setState(() {});
-      }
-    });
-    fetchdata();
+    // _algoStateReasonSubscription =
+    //     headset.onAlgoStateReasonChange().listen((state) {
+    //   _algoState = state['State'];
+    //   _algoReason = state['Reason'];
+    //   if (mounted) {
+    //     setState(() {});
+    //   }
+    // });
+    
     print("current session : $sessionval");
   }
 
@@ -113,41 +129,35 @@ class _MorningMeditationState extends State<MorningMeditation> {
     }
   }
 
-  void _addData(dynamic data) {
-    final userDoc = FirebaseFirestore.instance
-        .collection('Users')
-        .doc('Meditationdata')
-        .collection('Sessiondatas')
-<<<<<<< HEAD
-        .doc('session1');
-    userDoc.set({'MeditationData': data}, SetOptions(merge: true));
-    // ignore: avoid_print
-=======
-        .doc('session2');
-    userDoc.set({'MeditationData': data}, SetOptions(merge: false));
->>>>>>> 92c625ecc396085a20d80f1977f2c9163726baf8
-    print("Your data: $data");
-  }
-  Future<void> fetchdata() async{
-      final userDoc = FirebaseFirestore.instance
-        .collection('Users')
-        .doc('Meditationdata')
-        .collection('currentsession')
-        .doc('val');
-        DocumentSnapshot<Map<String, dynamic>> docSnapshot = await userDoc.get();
-        if(docSnapshot.exists){
-        userDoc.set({'currentsession': 1}, SetOptions(merge: true));
-        setState(() {
-          sessionval ;
-        });
-        }else{
-          setState(() {
-            sessionval = 1;
-          });
-        userDoc.set({'currentsession': sessionval}, SetOptions(merge: true));
+  // void _addData(dynamic data) {
+  //   final userDoc = FirebaseFirestore.instance
+  //       .collection('Users')
+  //       .doc('Meditationdata')
+  //       .collection('Sessiondatas')
+  //       .doc('session2');
+  //   userDoc.set({'MeditationData': data}, SetOptions(merge: true));
+  //   print("Your data: $data");
+  // }
 
-        }
-  }
+  // Future<void> fetchdata() async {
+  //   final userDoc = FirebaseFirestore.instance
+  //       .collection('Users')
+  //       .doc('Meditationdata')
+  //       .collection('currentsession')
+  //       .doc('val');
+  //   DocumentSnapshot<Map<String, dynamic>> docSnapshot = await userDoc.get();
+  //   if (docSnapshot.exists) {
+  //     userDoc.set({'currentsession': 1}, SetOptions(merge: true));
+  //     setState(() {
+  //       sessionval;
+  //     });
+  //   } else {
+  //     setState(() {
+  //       sessionval = 1;
+  //     });
+  //     userDoc.set({'currentsession': sessionval}, SetOptions(merge: true));
+  //   }
+  // }
 
   // void _startTimer() {
   //   _timer = Timer(Duration(seconds: 40), () {
@@ -162,39 +172,38 @@ class _MorningMeditationState extends State<MorningMeditation> {
   double sum = 0;
   double avg = 0;
   bool start = false;
-  void _startListeningToMeditationStream(Stream<int> stream) {
-    _meditationStreamSubscription = stream.listen((data) {
-      if (data > 5 && start == false) {
-        f = true;
-        _startSession();
-      }
+  // void _startListeningToMeditationStream(Stream<int> stream) {
+  //   _meditationStreamSubscription = stream.listen((data) {
+  //     if (data > 5 && start == false) {
+  //       f = true;
+  //       showtimerandmusic = true;
+  //       _startSession();
+  //     }
 
-      if (f && ok == 0) {
-        // ignore: avoid_print, unnecessary_brace_in_string_interps
-        print("Your stream is started : ${data} at $c");
-        fixedSizeList[c] = data;
-        sum = data + sum;
-        start = true;
-        c++;
-      }
+  //     if (f && ok == 0) {
+  //       print("Your stream is started : ${data} at $c");
+  //       fixedSizeList[c] = data;
+  //       sum = data + sum;
+  //       start = true;
+  //       c++;
+  //     }
 
-      if (c == fixedSizeList.length) {
-        f = false;
-        ok = 1;
-        
-        _stopSession();
-        setState(() {
-        _isdataadded = true;
-          avg = sum / fixedSizeList.length;
-        });
+  //     if (c == fixedSizeList.length) {
+  //       f = false;
+  //       ok = 1;
 
-        _meditationStreamSubscription?.cancel();
-        headset.disconnect();
-        // ignore: avoid_print
-        print("Your session data: $fixedSizeList");
-      }
-    });
-  }
+  //       _stopSession();
+  //       setState(() {
+  //         _isdataadded = true;
+  //         avg = sum / fixedSizeList.length;
+  //       });
+
+  //       _meditationStreamSubscription?.cancel();
+  //       headset.disconnect();
+  //       print("Your session data: $fixedSizeList");
+  //     }
+  //   });
+  // }
 
   Widget buildConnectButton(BuildContext context) {
     return Row(children: [
@@ -211,9 +220,12 @@ class _MorningMeditationState extends State<MorningMeditation> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        const Text(
-          "Connection Status",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        const Padding(
+          padding: EdgeInsets.all(10.0),
+          child: Text(
+            "Connection Status",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
         ),
         ElevatedButton(
           onPressed: null,
@@ -229,14 +241,35 @@ class _MorningMeditationState extends State<MorningMeditation> {
     );
   }
 
-  Widget graph(BuildContext context, String title, Stream<int> stream) {
-    _startListeningToMeditationStream(stream);
+  
+  Widget gaugebuild(BuildContext context,int data) {
+    return Center(
+        child: Container(
+          child: SfRadialGauge(
+          axes: <RadialAxis>[
+            RadialAxis(minimum: 0, maximum: 10,
+            ranges: <GaugeRange>[
+              GaugeRange(startValue: 0, endValue: 3, color:Colors.green),
+              GaugeRange(startValue: 3,endValue: 7,color: Colors.orange),
+              GaugeRange(startValue: 7,endValue: 10,color: Colors.red)],
+            pointers: <GaugePointer>[
+              NeedlePointer(value: data.toDouble()/10.0)],
+            annotations: <GaugeAnnotation>[
+              GaugeAnnotation(widget: Container(child: 
+                 Text('${(data/10).ceil()}',style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold))),
+                 angle: 90, positionFactor: 0.5
+              )]
+          )]),),);
+      
+  }
+
+  Widget Printdata(BuildContext context, String title, Stream<int> stream) {
+    
 
     return StreamBuilder<int>(
         stream: stream,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            // ignore: avoid_print
             print("Your error ${snapshot.error}");
             return Container();
           }
@@ -244,82 +277,46 @@ class _MorningMeditationState extends State<MorningMeditation> {
             return Container();
           }
           if (snapshot.hasData) {
-            // ignore: avoid_print, unnecessary_brace_in_string_interps
-            print("Your $title data is : ${snapshot.data} : ${c}");
+            print("Your $title data is : ${snapshot.data} ");
           }
-
-          if (f && ok == 0) {
-            _addData(fixedSizeList);
-
-            return LiveGraph(
-              dataStream: stream,
-              op: fixedSizeList,
-              length: fixedSizeList.length,
-            );
-          }
-          if (_isdataadded) {
-            return const LiveGraph(
-              dataStream: Stream.empty(),
-              op: [],
-              length: 0,
-            );
-          } else {
-            return Container();
-          }
+          return gaugebuild(context,snapshot.data!);
         });
   }
 
-  void _startSession() {
-    showDialog(
-      context: context,
-      builder: (context) => const AlertDialog(
-        content: Text("Your session has been started!"),
-        actions: [
-          
-        ],
-      ),
-    );
-    Timer(const Duration(seconds: 1), () {
-    Navigator.of(context).pop();
-  });
-  }
-  Widget displayavg(double avg){
-    return Text("Average: $avg");
+  
+
+  Widget displayavg(double avg) {
+    return Text("Your calmness level is: $avg",style: const TextStyle(color: Colors.white),);
   }
 
-  void _stopSession() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: const Text("Your session has been completed!"),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text("OK"),
-          ),
-        ],
-      ),
-    );
-  }
+  
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(''),
+        actions: [
+          buildConnectButton(context),
+          SizedBox(
+            width: 85,
+          ),
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ProfileScreen()));
+              },
+              icon: const Icon(Icons.person)),
+        ],
+      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.06,
+            height: 20,
           ),
-           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-         buildConnectButton(context),
-            ],
-          ),
-          const Divider(height: 20, color: Colors.black),
           buildStateWidget(context),
           ElevatedButton(
             onPressed: () {
@@ -330,23 +327,13 @@ class _MorningMeditationState extends State<MorningMeditation> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.yellowAccent,
             ),
-<<<<<<< HEAD
-            child: const Text('Start your 40 sec session'),
-=======
-            child:const Text('Start your 5 min session'),
->>>>>>> 92c625ecc396085a20d80f1977f2c9163726baf8
+            child: const Text('Start your session'),
           ),
+
           if (showgraph)
-            graph(context, "Meditation", headset.onAlgoMeditationUpdate()),
-            SizedBox(height: 30),
-            if(showgraph && widget.audiostatus)
-            MusicPlayerWidget(audioUrl:widget.audiofile ??'' ),
-          
-          // if (showgraph)
-          //   AlphaGraph(),
-            if(_isdataadded)
-            displayavg(avg)
+            Printdata(context, "Meditation", headset.onAlgoMeditationUpdate()),
             
+          
         ],
       ),
     );
