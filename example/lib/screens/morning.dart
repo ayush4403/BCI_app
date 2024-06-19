@@ -19,7 +19,10 @@ class MorningMeditation extends StatefulWidget {
   final String? audiofile;
   final int value;
   const MorningMeditation(
-      {super.key, required this.audiostatus, required this.audiofile, required this.value});
+      {super.key,
+      required this.audiostatus,
+      required this.audiofile,
+      required this.value});
 
   @override
   State<MorningMeditation> createState() => _MorningMeditationState();
@@ -46,31 +49,17 @@ class _MorningMeditationState extends State<MorningMeditation> {
   int sessionval = 1;
   bool showtimerandmusic = false;
   List<int> fixedSizeList = List.filled(40, 0);
-  int seconds = 5 * 60;
-  late Timer timer;
-
-  void startTimer() {
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (seconds > 0) {
-        setState(() {
-          seconds--;
-        });
-      } else {
-        timer.cancel();
-      }
-    });
-  }
-
-  void stopTimer() {
-    timer.cancel();
-  }
+  int c1 = 0;
+  int c2 = 0;
+  int c3 = 0;
+  int c4 = 0;
 
   @override
   void initState() {
     super.initState();
     _headsetStateSubscription = headset.onStateChange().listen((state) {
-  List<int> fixedSizeList = List.filled(widget.value, 0);
-  print("Your session time is : ${widget.value}");
+      List<int> fixedSizeList = List.filled(widget.value, 0);
+      print("Your session time is : ${widget.value}");
       _headsetState = state;
       if (state == HeadsetState.DISCONNECTED) {
         headset.disconnect();
@@ -88,7 +77,7 @@ class _MorningMeditationState extends State<MorningMeditation> {
         setState(() {});
       }
     });
-    fetchdata();
+    //fetchdata();
     print("current session : $sessionval");
   }
 
@@ -134,35 +123,35 @@ class _MorningMeditationState extends State<MorningMeditation> {
     }
   }
 
-  void _addData(dynamic data) {
+  void _addData(dynamic data1, dynamic data2, dynamic data3, dynamic data4) {
     final userDoc = FirebaseFirestore.instance
         .collection('Users')
         .doc('Meditationdata')
         .collection('Sessiondatas')
         .doc('session2');
-    userDoc.set({'MeditationData': data}, SetOptions(merge: true));
-    print("Your data: $data");
+    userDoc.set({'MeditationData': data1}, SetOptions(merge: true));
+    print("Your data: $data1");
   }
 
-  Future<void> fetchdata() async {
-    final userDoc = FirebaseFirestore.instance
-        .collection('Users')
-        .doc('Meditationdata')
-        .collection('currentsession')
-        .doc('val');
-    DocumentSnapshot<Map<String, dynamic>> docSnapshot = await userDoc.get();
-    if (docSnapshot.exists) {
-      userDoc.set({'currentsession': 1}, SetOptions(merge: true));
-      setState(() {
-        sessionval;
-      });
-    } else {
-      setState(() {
-        sessionval = 1;
-      });
-      userDoc.set({'currentsession': sessionval}, SetOptions(merge: true));
-    }
-  }
+  // Future<void> fetchdata() async {
+  //   final userDoc = FirebaseFirestore.instance
+  //       .collection('Users')
+  //       .doc('Meditationdata')
+  //       .collection('currentsession')
+  //       .doc('val');
+  //   DocumentSnapshot<Map<String, dynamic>> docSnapshot = await userDoc.get();
+  //   if (docSnapshot.exists) {
+  //     userDoc.set({'currentsession': 1}, SetOptions(merge: true));
+  //     setState(() {
+  //       sessionval;
+  //     });
+  //   } else {
+  //     setState(() {
+  //       sessionval = 1;
+  //     });
+  //     userDoc.set({'currentsession': sessionval}, SetOptions(merge: true));
+  //   }
+  // }
 
   // void _startTimer() {
   //   _timer = Timer(Duration(seconds: 40), () {
@@ -177,38 +166,38 @@ class _MorningMeditationState extends State<MorningMeditation> {
   double sum = 0;
   double avg = 0;
   bool start = false;
-  void _startListeningToMeditationStream(Stream<int> stream) {
-    _meditationStreamSubscription = stream.listen((data) {
-      if (data > 5 && start == false) {
-        f = true;
-        showtimerandmusic = true;
-        _startSession();
-      }
+  // void _startListeningToMeditationStream(Stream<int> stream) {
+  //   _meditationStreamSubscription = stream.listen((data) {
+  //     if (data > 5 && start == false) {
+  //       f = true;
+  //       showtimerandmusic = true;
+  //       _startSession();
+  //     }
 
-      if (f && ok == 0) {
-        print("Your stream is started : ${data} at $c");
-        fixedSizeList[c] = data;
-        sum = data + sum;
-        start = true;
-        c++;
-      }
+  //     if (f && ok == 0) {
+  //       print("Your stream is started : ${data} at $c");
+  //       fixedSizeList[c] = data;
+  //       sum = data + sum;
+  //       start = true;
+  //       c++;
+  //     }
 
-      if (c == fixedSizeList.length) {
-        f = false;
-        ok = 1;
+  //     if (c == fixedSizeList.length) {
+  //       f = false;
+  //       ok = 1;
 
-        _stopSession();
-        setState(() {
-          _isdataadded = true;
-          avg = sum / fixedSizeList.length;
-        });
+  //       _stopSession();
+  //       setState(() {
+  //         _isdataadded = true;
+  //         avg = sum / fixedSizeList.length;
+  //       });
 
-        _meditationStreamSubscription?.cancel();
-        headset.disconnect();
-        print("Your session data: $fixedSizeList");
-      }
-    });
-  }
+  //       _meditationStreamSubscription?.cancel();
+  //       headset.disconnect();
+  //       print("Your session data: $fixedSizeList");
+  //     }
+  //   });
+  // }
 
   Widget buildConnectButton(BuildContext context) {
     return Row(children: [
@@ -247,7 +236,7 @@ class _MorningMeditationState extends State<MorningMeditation> {
   }
 
   Widget graph(BuildContext context, String title, Stream<int> stream) {
-    _startListeningToMeditationStream(stream);
+    // _startListeningToMeditationStream(stream);
 
     return StreamBuilder<int>(
         stream: stream,
@@ -261,26 +250,18 @@ class _MorningMeditationState extends State<MorningMeditation> {
           }
           if (snapshot.hasData) {
             print("Your $title data is : ${snapshot.data} : ${c}");
+            if (snapshot.data! <= 40 && snapshot.data! > 0) {
+              c1++;
+            } else if (snapshot.data! <= 50 && snapshot.data! > 40) {
+              c2++;
+            } else if (snapshot.data! <=60  && snapshot.data! > 50) {
+              c3++;
+            } else {
+              c4++;
+            }
+            
           }
-
-          if (f && ok == 0) {
-            _addData(fixedSizeList);
-
-            return LiveGraph(
-              dataStream: stream,
-              op: fixedSizeList,
-              length: fixedSizeList.length,
-            );
-          }
-          if (_isdataadded) {
-            return LiveGraph(
-              dataStream: Stream.empty(),
-              op: [],
-              length: 0,
-            );
-          } else {
-            return Container();
-          }
+          return Container();
         });
   }
 
@@ -298,7 +279,10 @@ class _MorningMeditationState extends State<MorningMeditation> {
   }
 
   Widget displayavg(double avg) {
-    return Text("Your calmness level is: $avg",style: const TextStyle(color: Colors.white),);
+    return Text(
+      "Your calmness level is: $avg",
+      style: const TextStyle(color: Colors.white),
+    );
   }
 
   void _stopSession() {
@@ -370,7 +354,7 @@ class _MorningMeditationState extends State<MorningMeditation> {
 
           // if (showgraph)
           //   AlphaGraph(),
-           if (_isdataadded) displayavg(avg)
+          if (_isdataadded) displayavg(avg)
         ],
       ),
     );

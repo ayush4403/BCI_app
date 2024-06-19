@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
+// ignore: depend_on_referenced_packages
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:go_router/go_router.dart';
@@ -9,7 +10,7 @@ import 'package:logging/logging.dart';
 import 'package:mindwave_mobile2_example/screens/profile.dart';
 //import 'package:mindwave_mobile2_example/screens/Games/level.dart';
 import 'package:mindwave_mobile2_example/screens/splashscreen.dart';
-import 'screens/bluetooth_off_screen.dart';
+
 import 'screens/scan_screen.dart';
 
 void main() async {
@@ -25,7 +26,7 @@ Logger.root.onRecord.listen((record) {
     SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
-  ]).then((value) => runApp(MyAppMain()));
+  ]).then((value) => runApp(const MyAppMain()));
   runApp(const MyAppMain());
 }
 
