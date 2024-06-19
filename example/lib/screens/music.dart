@@ -3,6 +3,7 @@ import 'package:audioplayers/audioplayers.dart';
 
 class MusicPlayerWidget extends StatefulWidget {
   final String audioUrl;
+  
 
   MusicPlayerWidget({required this.audioUrl});
 

@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:mindwave_mobile2/mindwave_mobile2.dart';
+import 'package:mindwave_mobile2_example/screens/bluetooth_off_screen.dart';
+import 'package:mindwave_mobile2_example/screens/Games/gameview.dart';
 import 'package:mindwave_mobile2_example/screens/graphui.dart';
 import 'package:mindwave_mobile2_example/screens/home.dart';
 import 'package:mindwave_mobile2_example/screens/morning.dart';
@@ -25,6 +27,8 @@ class _ScanScreenState extends State<ScanScreen> {
   late StreamSubscription<List<ScanResult>> _scanResultsSubscription;
   late StreamSubscription<bool> _isScanningSubscription;
   late ScanResult result;
+  BluetoothAdapterState _adapterState = BluetoothAdapterState.unknown;
+  late StreamSubscription<BluetoothAdapterState> _adapterStateStateSubscription;
 
   @override
   void initState() {
@@ -43,6 +47,13 @@ class _ScanScreenState extends State<ScanScreen> {
 
     _isScanningSubscription = FlutterBluePlus.isScanning.listen((state) {
       _isScanning = state;
+      if (mounted) {
+        setState(() {});
+      }
+    });
+    _adapterStateStateSubscription =
+        FlutterBluePlus.adapterState.listen((state) {
+      _adapterState = state;
       if (mounted) {
         setState(() {});
       }
@@ -137,15 +148,22 @@ class _ScanScreenState extends State<ScanScreen> {
     }).toList();
   }
 
+ 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Bluetooth Devices'),
         actions: [
-          IconButton(onPressed: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
-          }, icon: const Icon(Icons.forward)),
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ProfileScreen()));
+              },
+              icon: const Icon(Icons.person)),
         ],
       ),
       body: RefreshIndicator(

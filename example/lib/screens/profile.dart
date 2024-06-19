@@ -4,6 +4,7 @@ import 'package:mindwave_mobile2_example/screens/home.dart';
 import 'package:mindwave_mobile2_example/screens/logs.dart';
 import 'package:mindwave_mobile2_example/screens/session.dart';
 
+
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -22,36 +23,62 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.fromLTRB(10, 25, 10, 0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Profile Picture and Name
-              CircleAvatar(
-                radius: 50,
-                backgroundImage: AssetImage(
-                    'assets/profile_picture.png'), // Replace with your image asset
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Cerbotech',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white, // Background color
+                  borderRadius: BorderRadius.circular(30), // Rounded corners
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: Offset(0, 3), // changes position of shadow
+                    ),
+                  ],
                 ),
-              ),
-              SizedBox(height: 32),
-              // PageView taking half of the screen height
-              SizedBox(
-                height: screenHeight,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                  child: PageView(
-                    children: const [
-                      // Replace these containers with your desired screens or widgets
-                      CalendarScreen(),
-                    ],
-                  ),
+                padding: const EdgeInsets.all(8.0),
+                margin: const EdgeInsets.only(bottom: 20),
+                child: Row(
+                  children: [
+                    const SizedBox(width: 10),
+                    const CircleAvatar(
+                      backgroundColor: Colors.blue,
+                      radius: 40,
+                      backgroundImage: AssetImage('assets/mindwave.jpg'),
+                    ),
+                    const SizedBox(width: 20),
+                    const Text(
+                      'Cerbotech',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 60),
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.blue[500],
+                      ),
+                      padding: const EdgeInsets.all(3.0),
+                      child: IconButton(
+                        icon: const Icon(Icons.calendar_today,
+                            color: Colors.white, size: 30),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const CalendarScreen()),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
               SizedBox(height: 32),
@@ -64,7 +91,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   trailing: IconButton(
                     icon: Icon(Icons.arrow_forward_ios),
                     onPressed: () {
-                     Navigator.push(context, MaterialPageRoute(builder: (context)=> SessionScreen()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SessionScreen()));
                     },
                   ),
                 ),
@@ -79,7 +109,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   trailing: IconButton(
                     icon: Icon(Icons.arrow_forward_ios),
                     onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=> MyApp1n()));
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => MyApp1n()));
                     },
                   ),
                 ),
@@ -91,27 +122,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   leading: Icon(Icons.star),
                   title: Text('Level of Meditation'),
                   subtitle: Text('Your current meditation level'),
-                  trailing: IconButton(
-                    icon: Icon(Icons.arrow_forward_ios),
-                    onPressed: () {
-                      // Handle button tap
-                    },
-                  ),
-                ),
-              ),
-              SizedBox(height: 16),
-              // Additional Tile
-              Card(
-                child: ListTile(
-                  leading: Icon(Icons.more_horiz),
-                  title: Text('More Info'),
-                  subtitle: Text('Additional information'),
-                  trailing: IconButton(
-                    icon: Icon(Icons.forward),
-                    onPressed: () {
-                         Navigator.push(context, MaterialPageRoute(builder: (context)=> SessionSelectionPage()));
-                    },
-                  ),
                 ),
               ),
             ],

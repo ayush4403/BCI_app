@@ -9,7 +9,7 @@ class SessionSelectionPage extends StatefulWidget {
 }
 
 class _SessionSelectionPageState extends State<SessionSelectionPage> {
-  final List<int> sessionDurations = [5]; // Session durations in minutes
+  final List<int> sessionDurations = [40,120,300]; // Session durations in minutes
   final List<String> musicNames = [
     "Visualize",
     "Guided",
@@ -52,7 +52,7 @@ class _SessionSelectionPageState extends State<SessionSelectionPage> {
               items: sessionDurations.map<DropdownMenuItem<int>>((int value) {
                 return DropdownMenuItem<int>(
                   value: value,
-                  child: Text('$value minutes'),
+                  child: Text('$value seconds'),
                 );
               }).toList(),
             ),
@@ -116,7 +116,8 @@ class _SessionSelectionPageState extends State<SessionSelectionPage> {
                                 MaterialPageRoute(
                                     builder: (ctx) => MorningMeditation(
                                           audiostatus: playMusic,
-                                          audiofile: selectedMusicFile ?? '',
+                                          audiofile: selectedMusicFile ?? '', value: selectedDuration ?? 40,
+                                          
                                         )));
                                         //Navigator.pop(context);
                           },

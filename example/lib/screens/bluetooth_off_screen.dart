@@ -21,7 +21,7 @@ class BluetoothOffScreen extends StatelessWidget {
   Widget buildTitle(BuildContext context) {
     String? state = adapterState?.toString().split(".").last;
     return Text(
-      'Bluetooth Adapter is ${state ?? 'not available'}',
+      'Your Bluetooth is ${state ?? 'not available'}',
       style: Theme.of(context)
           .primaryTextTheme
           .titleSmall
@@ -33,7 +33,9 @@ class BluetoothOffScreen extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: ElevatedButton(
-        child: const Text('TURN ON'),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue, // Set background color to blue
+        ),
         onPressed: () async {
           try {
             if (Platform.isAndroid) {
@@ -46,6 +48,7 @@ class BluetoothOffScreen extends StatelessWidget {
             }
           }
         },
+        child: const Text('TURN ON', style: TextStyle(color: Colors.white)),
       ),
     );
   }
@@ -53,7 +56,7 @@ class BluetoothOffScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.lightBlue,
+      backgroundColor: Colors.black,
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,

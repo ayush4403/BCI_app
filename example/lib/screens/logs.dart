@@ -132,13 +132,13 @@ class _LineChartFromFirestoreState extends State<LineChartFromFirestore> {
       body: _dataPoints.isEmpty
           ? Center(child: CircularProgressIndicator())
           : Padding(
-              padding: const EdgeInsets.all(0),
-              child: SingleChildScrollView(
+            padding: const EdgeInsets.all(0),
+            child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Container(
                   width: _dataPoints.length *
                       10.0, // Adjust width according to data length
-                  height: MediaQuery.of(context).size.height * 0.5,
+                  height: MediaQuery.of(context).size.height*0.5,
                   child: LineChart(
                     LineChartData(
                       minX: 0,
@@ -173,12 +173,12 @@ class _LineChartFromFirestoreState extends State<LineChartFromFirestore> {
                             },
                           ),
                         ),
-                        rightTitles: AxisTitles(
-                            sideTitles: SideTitles(showTitles: false)),
-                        topTitles: AxisTitles(
-                            sideTitles: SideTitles(showTitles: false)),
-                        bottomTitles: AxisTitles(
-                            sideTitles: SideTitles(showTitles: false)),
+                        rightTitles:
+                            AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        topTitles:
+                            AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        bottomTitles:
+                            AxisTitles(sideTitles: SideTitles(showTitles: false)),
                       ),
                       gridData: FlGridData(show: true),
                       borderData: FlBorderData(show: true),
@@ -186,7 +186,7 @@ class _LineChartFromFirestoreState extends State<LineChartFromFirestore> {
                   ),
                 ),
               ),
-            ),
+          ),
     );
   }
 }
@@ -714,15 +714,18 @@ class PieChartSample1State extends State {
       aspectRatio: 1.3,
       child: Column(
         children: <Widget>[
+          
+          const Text("Your Meditation Level"),
           const SizedBox(
-            height: 60,
+            height: 30,
           ),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Indicator(
                 color: AppColors.contentColorBlue,
-                text: '40-50',
+                text: '1-4',
                 isSquare: false,
                 size: touchedIndex == 0 ? 18 : 16,
                 textColor: touchedIndex == 0
@@ -731,7 +734,7 @@ class PieChartSample1State extends State {
               ),
               Indicator(
                 color: AppColors.contentColorYellow,
-                text: '10-40',
+                text: '4-5',
                 isSquare: false,
                 size: touchedIndex == 1 ? 18 : 16,
                 textColor: touchedIndex == 1
@@ -740,7 +743,7 @@ class PieChartSample1State extends State {
               ),
               Indicator(
                 color: AppColors.contentColorPink,
-                text: '60-100',
+                text: '5-6',
                 isSquare: false,
                 size: touchedIndex == 2 ? 18 : 16,
                 textColor: touchedIndex == 2
@@ -749,7 +752,7 @@ class PieChartSample1State extends State {
               ),
               Indicator(
                 color: AppColors.contentColorGreen,
-                text: '50-60',
+                text: '6-10',
                 isSquare: false,
                 size: touchedIndex == 3 ? 18 : 16,
                 textColor: touchedIndex == 3

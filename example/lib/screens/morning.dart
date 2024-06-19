@@ -8,6 +8,7 @@ import 'package:mindwave_mobile2_example/screens/graphalpha.dart';
 import 'package:mindwave_mobile2_example/screens/graphui.dart';
 import 'package:mindwave_mobile2_example/screens/music.dart';
 import 'package:mindwave_mobile2_example/screens/profile.dart';
+import 'package:mindwave_mobile2_example/screens/timer.dart';
 import 'package:mindwave_mobile2_example/util/snackbar_popup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -16,7 +17,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class MorningMeditation extends StatefulWidget {
   final bool audiostatus;
   final String? audiofile;
-  const MorningMeditation({super.key,required this.audiostatus, required this.audiofile});
+  final int value;
+  const MorningMeditation(
+      {super.key, required this.audiostatus, required this.audiofile, required this.value});
 
   @override
   State<MorningMeditation> createState() => _MorningMeditationState();
@@ -39,20 +42,41 @@ class _MorningMeditationState extends State<MorningMeditation> {
   int c = 0;
   bool f = false;
   int ok = 0;
-  List<int> fixedSizeList = List.filled(300, 0);
   bool showgraph = false;
- int sessionval=1;
+  int sessionval = 1;
+  bool showtimerandmusic = false;
+  List<int> fixedSizeList = List.filled(40, 0);
+  int seconds = 5 * 60;
+  late Timer timer;
+
+  void startTimer() {
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (seconds > 0) {
+        setState(() {
+          seconds--;
+        });
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  void stopTimer() {
+    timer.cancel();
+  }
+
   @override
   void initState() {
     super.initState();
     _headsetStateSubscription = headset.onStateChange().listen((state) {
+  List<int> fixedSizeList = List.filled(widget.value, 0);
+  print("Your session time is : ${widget.value}");
       _headsetState = state;
       if (state == HeadsetState.DISCONNECTED) {
         headset.disconnect();
       }
-         if (mounted) {
+      if (mounted) {
         setState(() {});
-       
       }
     });
 
@@ -60,7 +84,7 @@ class _MorningMeditationState extends State<MorningMeditation> {
         headset.onAlgoStateReasonChange().listen((state) {
       _algoState = state['State'];
       _algoReason = state['Reason'];
-         if (mounted) {
+      if (mounted) {
         setState(() {});
       }
     });
@@ -116,28 +140,28 @@ class _MorningMeditationState extends State<MorningMeditation> {
         .doc('Meditationdata')
         .collection('Sessiondatas')
         .doc('session2');
-    userDoc.set({'MeditationData': data}, SetOptions(merge: false));
+    userDoc.set({'MeditationData': data}, SetOptions(merge: true));
     print("Your data: $data");
   }
-  Future<void> fetchdata() async{
-      final userDoc = FirebaseFirestore.instance
+
+  Future<void> fetchdata() async {
+    final userDoc = FirebaseFirestore.instance
         .collection('Users')
         .doc('Meditationdata')
         .collection('currentsession')
         .doc('val');
-        DocumentSnapshot<Map<String, dynamic>> docSnapshot = await userDoc.get();
-        if(docSnapshot.exists){
-        userDoc.set({'currentsession': 1}, SetOptions(merge: true));
-        setState(() {
-          sessionval ;
-        });
-        }else{
-          setState(() {
-            sessionval = 1;
-          });
-        userDoc.set({'currentsession': sessionval}, SetOptions(merge: true));
-
-        }
+    DocumentSnapshot<Map<String, dynamic>> docSnapshot = await userDoc.get();
+    if (docSnapshot.exists) {
+      userDoc.set({'currentsession': 1}, SetOptions(merge: true));
+      setState(() {
+        sessionval;
+      });
+    } else {
+      setState(() {
+        sessionval = 1;
+      });
+      userDoc.set({'currentsession': sessionval}, SetOptions(merge: true));
+    }
   }
 
   // void _startTimer() {
@@ -157,6 +181,7 @@ class _MorningMeditationState extends State<MorningMeditation> {
     _meditationStreamSubscription = stream.listen((data) {
       if (data > 5 && start == false) {
         f = true;
+        showtimerandmusic = true;
         _startSession();
       }
 
@@ -171,10 +196,10 @@ class _MorningMeditationState extends State<MorningMeditation> {
       if (c == fixedSizeList.length) {
         f = false;
         ok = 1;
-        
+
         _stopSession();
         setState(() {
-        _isdataadded = true;
+          _isdataadded = true;
           avg = sum / fixedSizeList.length;
         });
 
@@ -200,9 +225,12 @@ class _MorningMeditationState extends State<MorningMeditation> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        const Text(
-          "Connection Status",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        const Padding(
+          padding: EdgeInsets.all(10.0),
+          child: Text(
+            "Connection Status",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
         ),
         ElevatedButton(
           onPressed: null,
@@ -261,17 +289,16 @@ class _MorningMeditationState extends State<MorningMeditation> {
       context: context,
       builder: (context) => const AlertDialog(
         content: Text("Your session has been started!"),
-        actions: [
-          
-        ],
+        actions: [],
       ),
     );
     Timer(const Duration(seconds: 1), () {
-    Navigator.of(context).pop();
-  });
+      Navigator.of(context).pop();
+    });
   }
-  Widget displayavg(double avg){
-    return Text("Average: $avg");
+
+  Widget displayavg(double avg) {
+    return Text("Your calmness level is: $avg",style: const TextStyle(color: Colors.white),);
   }
 
   void _stopSession() {
@@ -294,19 +321,29 @@ class _MorningMeditationState extends State<MorningMeditation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(''),
+        actions: [
+          buildConnectButton(context),
+          SizedBox(
+            width: 85,
+          ),
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ProfileScreen()));
+              },
+              icon: const Icon(Icons.person)),
+        ],
+      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.06,
+            height: 20,
           ),
-           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-         buildConnectButton(context),
-            ],
-          ),
-          const Divider(height: 20, color: Colors.black),
           buildStateWidget(context),
           ElevatedButton(
             onPressed: () {
@@ -317,19 +354,23 @@ class _MorningMeditationState extends State<MorningMeditation> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.yellowAccent,
             ),
-            child:const Text('Start your 5 min session'),
+            child: const Text('Start your session'),
           ),
+
           if (showgraph)
             graph(context, "Meditation", headset.onAlgoMeditationUpdate()),
-            SizedBox(height: 30),
-            if(showgraph && widget.audiostatus)
-            MusicPlayerWidget(audioUrl:widget.audiofile ??'' ),
-          
+          SizedBox(height: 30),
+          if (showgraph && widget.audiostatus)
+            MusicPlayerWidget(audioUrl: widget.audiofile ?? ''),
+          // if (showtimerandmusic)
+          //   StopwatchApp(
+          //     onpressed: startTimer,
+          //     oncompleted: !f,
+          //   ),
+
           // if (showgraph)
           //   AlphaGraph(),
-            if(_isdataadded)
-            displayavg(avg)
-            
+           if (_isdataadded) displayavg(avg)
         ],
       ),
     );
