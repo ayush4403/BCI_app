@@ -1,18 +1,15 @@
 import 'dart:async';
-import 'package:firebase_core/firebase_core.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mindwave_mobile2/enums/algo_state_reason.dart';
 import 'package:mindwave_mobile2/enums/headset_state.dart';
 import 'package:mindwave_mobile2/mindwave_mobile2.dart';
-import 'package:mindwave_mobile2_example/screens/graphalpha.dart';
-import 'package:mindwave_mobile2_example/screens/graphui.dart';
-import 'package:mindwave_mobile2_example/screens/music.dart';
+
 import 'package:mindwave_mobile2_example/screens/profile.dart';
-import 'package:mindwave_mobile2_example/screens/timer.dart';
+
 import 'package:mindwave_mobile2_example/util/snackbar_popup.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class MorningMeditation extends StatefulWidget {
   final bool audiostatus;
@@ -32,16 +29,15 @@ class _MorningMeditationState extends State<MorningMeditation> {
   bool isConnected = false;
   final MindwaveMobile2 headset = MindwaveMobile2();
   HeadsetState _headsetState = HeadsetState.DISCONNECTED;
-  AlgoState _algoState = AlgoState.INITED;
-  AlgoReason _algoReason = AlgoReason.SIGNAL_QUALITY;
+  //AlgoState _algoState = AlgoState.INITED;
+  //AlgoReason _algoReason = AlgoReason.SIGNAL_QUALITY;
   int dataunits = 0;
 
   late StreamSubscription<HeadsetState>? _headsetStateSubscription;
   late StreamSubscription<Map>? _algoStateReasonSubscription;
   StreamSubscription<int>? _meditationStreamSubscription;
   late Timer _timer;
-  bool _isTimerRunning = false;
-  bool _isdataadded = false;
+
   int c = 0;
   bool f = false;
   int ok = 0;
@@ -58,7 +54,6 @@ class _MorningMeditationState extends State<MorningMeditation> {
   void initState() {
     super.initState();
     _headsetStateSubscription = headset.onStateChange().listen((state) {
-      List<int> fixedSizeList = List.filled(widget.value, 0);
       print("Your session time is : ${widget.value}");
       _headsetState = state;
       if (state == HeadsetState.DISCONNECTED) {
@@ -69,15 +64,15 @@ class _MorningMeditationState extends State<MorningMeditation> {
       }
     });
 
-    _algoStateReasonSubscription =
-        headset.onAlgoStateReasonChange().listen((state) {
-      _algoState = state['State'];
-      _algoReason = state['Reason'];
-      if (mounted) {
-        setState(() {});
-      }
-    });
-    //fetchdata();
+    // _algoStateReasonSubscription =
+    //     headset.onAlgoStateReasonChange().listen((state) {
+    //   _algoState = state['State'];
+    //   _algoReason = state['Reason'];
+    //   if (mounted) {
+    //     setState(() {});
+    //   }
+    // });
+
     print("current session : $sessionval");
   }
 
@@ -123,14 +118,14 @@ class _MorningMeditationState extends State<MorningMeditation> {
     }
   }
 
-  void _addData(dynamic data1, dynamic data2, dynamic data3, dynamic data4) {
+  void _addData(dynamic data ,int c1,int c2,int c3,int c4) {
     final userDoc = FirebaseFirestore.instance
         .collection('Users')
         .doc('Meditationdata')
         .collection('Sessiondatas')
         .doc('session2');
-    userDoc.set({'MeditationData': data1}, SetOptions(merge: true));
-    print("Your data: $data1");
+    userDoc.set({'MeditationData': data ,"counter1":c1,"counter2":c2,"counter3":c3,"counter4":c4}, SetOptions(merge: true));
+    print("Your data: $data");
   }
 
   // Future<void> fetchdata() async {
@@ -235,9 +230,31 @@ class _MorningMeditationState extends State<MorningMeditation> {
     );
   }
 
-  Widget graph(BuildContext context, String title, Stream<int> stream) {
-    // _startListeningToMeditationStream(stream);
+  Widget gaugebuild(BuildContext context, int data) {
+    return Center(
+      child: Container(
+        child: SfRadialGauge(axes: <RadialAxis>[
+          RadialAxis(minimum: 0, maximum: 10, ranges: <GaugeRange>[
+            GaugeRange(startValue: 0, endValue: 3, color: Colors.green),
+            GaugeRange(startValue: 3, endValue: 7, color: Colors.orange),
+            GaugeRange(startValue: 7, endValue: 10, color: Colors.red)
+          ], pointers: <GaugePointer>[
+            NeedlePointer(value: data.toDouble() / 10.0)
+          ], annotations: <GaugeAnnotation>[
+            GaugeAnnotation(
+                widget: Container(
+                    child: Text('${(data / 10).ceil()}',
+                        style: TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.bold))),
+                angle: 90,
+                positionFactor: 0.5)
+          ])
+        ]),
+      ),
+    );
+  }
 
+  Widget Printdata(BuildContext context, String title, Stream<int> stream) {
     return StreamBuilder<int>(
         stream: stream,
         builder: (context, snapshot) {
@@ -249,56 +266,26 @@ class _MorningMeditationState extends State<MorningMeditation> {
             return Container();
           }
           if (snapshot.hasData) {
-            print("Your $title data is : ${snapshot.data} : ${c}");
-            if (snapshot.data! <= 40 && snapshot.data! > 0) {
-              c1++;
-            } else if (snapshot.data! <= 50 && snapshot.data! > 40) {
-              c2++;
-            } else if (snapshot.data! <=60  && snapshot.data! > 50) {
+            print("Your $title data is : ${snapshot.data} ");
+            if(snapshot.data! >0 && snapshot.data! <= 40){
+                c1++;
+            }else if(snapshot.data! >40 && snapshot.data! <= 55){
+                c2++;
+            }else if(snapshot.data! >55 && snapshot.data! <= 70){
               c3++;
-            } else {
+            }else{
               c4++;
             }
-            
+_addData(snapshot.data, c1, c2, c3, c4);
           }
-          return Container();
+          return gaugebuild(context, snapshot.data!);
         });
-  }
-
-  void _startSession() {
-    showDialog(
-      context: context,
-      builder: (context) => const AlertDialog(
-        content: Text("Your session has been started!"),
-        actions: [],
-      ),
-    );
-    Timer(const Duration(seconds: 1), () {
-      Navigator.of(context).pop();
-    });
   }
 
   Widget displayavg(double avg) {
     return Text(
       "Your calmness level is: $avg",
       style: const TextStyle(color: Colors.white),
-    );
-  }
-
-  void _stopSession() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: Text("Your session has been completed!"),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text("OK"),
-          ),
-        ],
-      ),
     );
   }
 
@@ -336,25 +323,13 @@ class _MorningMeditationState extends State<MorningMeditation> {
               });
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.yellowAccent,
+              backgroundColor: Colors.blue,
             ),
-            child: const Text('Start your session'),
+            child: const Text('Start your session',
+                style: TextStyle(color: Colors.white)),
           ),
-
           if (showgraph)
-            graph(context, "Meditation", headset.onAlgoMeditationUpdate()),
-          SizedBox(height: 30),
-          if (showgraph && widget.audiostatus)
-            MusicPlayerWidget(audioUrl: widget.audiofile ?? ''),
-          // if (showtimerandmusic)
-          //   StopwatchApp(
-          //     onpressed: startTimer,
-          //     oncompleted: !f,
-          //   ),
-
-          // if (showgraph)
-          //   AlphaGraph(),
-          if (_isdataadded) displayavg(avg)
+            Printdata(context, "Meditation", headset.onAlgoMeditationUpdate()),
         ],
       ),
     );

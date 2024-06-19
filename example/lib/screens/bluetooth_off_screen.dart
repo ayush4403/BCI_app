@@ -49,9 +49,10 @@ class BluetoothOffScreen extends StatelessWidget {
           }
         },
         child: const Text('TURN ON', style: TextStyle(color: Colors.white)),
-      ),
+      )
     );
-  }
+    
+}
 
   @override
   Widget build(BuildContext context) {

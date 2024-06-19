@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
 import 'package:fl_chart/fl_chart.dart';
 
 class LiveGraph extends StatefulWidget {
@@ -9,7 +9,7 @@ class LiveGraph extends StatefulWidget {
   final int length;
 
 
-  LiveGraph(
+  const LiveGraph(
       {Key? key,
       required this.dataStream,
       required this.op,
@@ -17,6 +17,7 @@ class LiveGraph extends StatefulWidget {
       : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _LiveGraphState createState() => _LiveGraphState();
 }
 
@@ -69,7 +70,7 @@ class _LiveGraphState extends State<LiveGraph> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
+        SizedBox(
           height: 200, // Adjust this value to make the graph vertically smaller
           child: LineChart(
             LineChartData(
@@ -81,7 +82,7 @@ class _LiveGraphState extends State<LiveGraph> {
                   isCurved: true,
                   color: Colors.blue,
                   barWidth: 4,
-                  dotData: FlDotData(show: true),
+                  dotData: const FlDotData(show: true),
                   belowBarData: BarAreaData(
                     show: true,
                     color: Colors.blue.withOpacity(0.3),
@@ -104,15 +105,15 @@ class _LiveGraphState extends State<LiveGraph> {
                   ),
                 ),
                 topTitles:
-                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 rightTitles:
-                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 bottomTitles:
-                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
               ),
               borderData: FlBorderData(show: true),
-              gridData: FlGridData(show: true),
-              lineTouchData: LineTouchData(
+              gridData: const FlGridData(show: true),
+              lineTouchData: const LineTouchData(
                 touchTooltipData: LineTouchTooltipData(),
                 handleBuiltInTouches: true,
               ),
