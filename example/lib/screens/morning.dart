@@ -3,12 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:mindwave_mobile2/enums/algo_state_reason.dart';
 import 'package:mindwave_mobile2/enums/headset_state.dart';
 import 'package:mindwave_mobile2/mindwave_mobile2.dart';
+import 'package:mindwave_mobile2_example/screens/graphalpha.dart';
 import 'package:mindwave_mobile2_example/screens/graphui.dart';
+<<<<<<< HEAD
+=======
+import 'package:mindwave_mobile2_example/screens/music.dart';
+import 'package:mindwave_mobile2_example/screens/profile.dart';
+>>>>>>> 92c625ecc396085a20d80f1977f2c9163726baf8
 import 'package:mindwave_mobile2_example/util/snackbar_popup.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MorningMeditation extends StatefulWidget {
-  const MorningMeditation({super.key});
+  final bool audiostatus;
+  final String? audiofile;
+  const MorningMeditation({super.key,required this.audiostatus, required this.audiofile});
 
   @override
   State<MorningMeditation> createState() => _MorningMeditationState();
@@ -34,9 +42,9 @@ class _MorningMeditationState extends State<MorningMeditation> {
   int c = 0;
   bool f = false;
   int ok = 0;
-  List<int> fixedSizeList = List.filled(40, 0);
+  List<int> fixedSizeList = List.filled(300, 0);
   bool showgraph = false;
-
+ int sessionval=1;
   @override
   void initState() {
     super.initState();
@@ -59,6 +67,8 @@ class _MorningMeditationState extends State<MorningMeditation> {
         setState(() {});
       }
     });
+    fetchdata();
+    print("current session : $sessionval");
   }
 
   @override
@@ -108,10 +118,35 @@ class _MorningMeditationState extends State<MorningMeditation> {
         .collection('Users')
         .doc('Meditationdata')
         .collection('Sessiondatas')
+<<<<<<< HEAD
         .doc('session1');
     userDoc.set({'MeditationData': data}, SetOptions(merge: true));
     // ignore: avoid_print
+=======
+        .doc('session2');
+    userDoc.set({'MeditationData': data}, SetOptions(merge: false));
+>>>>>>> 92c625ecc396085a20d80f1977f2c9163726baf8
     print("Your data: $data");
+  }
+  Future<void> fetchdata() async{
+      final userDoc = FirebaseFirestore.instance
+        .collection('Users')
+        .doc('Meditationdata')
+        .collection('currentsession')
+        .doc('val');
+        DocumentSnapshot<Map<String, dynamic>> docSnapshot = await userDoc.get();
+        if(docSnapshot.exists){
+        userDoc.set({'currentsession': 1}, SetOptions(merge: true));
+        setState(() {
+          sessionval ;
+        });
+        }else{
+          setState(() {
+            sessionval = 1;
+          });
+        userDoc.set({'currentsession': sessionval}, SetOptions(merge: true));
+
+        }
   }
 
   // void _startTimer() {
@@ -295,13 +330,23 @@ class _MorningMeditationState extends State<MorningMeditation> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.yellowAccent,
             ),
+<<<<<<< HEAD
             child: const Text('Start your 40 sec session'),
+=======
+            child:const Text('Start your 5 min session'),
+>>>>>>> 92c625ecc396085a20d80f1977f2c9163726baf8
           ),
           if (showgraph)
             graph(context, "Meditation", headset.onAlgoMeditationUpdate()),
             SizedBox(height: 30),
+            if(showgraph && widget.audiostatus)
+            MusicPlayerWidget(audioUrl:widget.audiofile ??'' ),
+          
+          // if (showgraph)
+          //   AlphaGraph(),
             if(_isdataadded)
             displayavg(avg)
+            
         ],
       ),
     );

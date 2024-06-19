@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:mindwave_mobile2_example/screens/morning.dart';
 import 'package:mindwave_mobile2_example/screens/music.dart';
 
 class SessionSelectionPage extends StatefulWidget {
@@ -8,7 +9,7 @@ class SessionSelectionPage extends StatefulWidget {
 }
 
 class _SessionSelectionPageState extends State<SessionSelectionPage> {
-  final List<int> sessionDurations = [5, 10]; // Session durations in minutes
+  final List<int> sessionDurations = [5]; // Session durations in minutes
   final List<String> musicNames = [
     "Visualize",
     "Guided",
@@ -109,7 +110,16 @@ class _SessionSelectionPageState extends State<SessionSelectionPage> {
                           'Session duration: $selectedDuration minutes\nMusic $musicStatus'),
                       actions: [
                         TextButton(
-                          onPressed: () => Navigator.pop(context),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (ctx) => MorningMeditation(
+                                          audiostatus: playMusic,
+                                          audiofile: selectedMusicFile ?? '',
+                                        )));
+                                        //Navigator.pop(context);
+                          },
                           child: Text('OK'),
                         ),
                       ],
@@ -120,8 +130,10 @@ class _SessionSelectionPageState extends State<SessionSelectionPage> {
               },
               child: Text('Submit'),
             ),
-            if (playMusic)
-              MusicPlayerWidget(audioUrl:selectedMusicFile!),
+            // if (playMusic )
+            //   MusicPlayerWidget(audioUrl:selectedMusicFile ??'' ),
+            // if (playMusic )
+            //   Text("Now Playing ${musicNames[musicFiles.indexOf(selectedMusicFile!)]}"),
           ],
         ),
       ),

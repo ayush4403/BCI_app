@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:mindwave_mobile2/mindwave_mobile2.dart';
-import 'package:mindwave_mobile2_example/screens/custom_scan_button.dart';
+import 'package:mindwave_mobile2_example/screens/graphui.dart';
+import 'package:mindwave_mobile2_example/screens/home.dart';
 import 'package:mindwave_mobile2_example/screens/morning.dart';
 import 'package:mindwave_mobile2_example/screens/profile.dart';
 import 'package:mindwave_mobile2_example/screens/buffer_screen.dart'; // Ensure you have this import
@@ -93,7 +94,7 @@ class _ScanScreenState extends State<ScanScreen> {
       }
     }
     MaterialPageRoute route = MaterialPageRoute(
-      builder: (context) => const MorningMeditation(),
+      builder: (context) => SessionSelectionPage(),
     );
     if (context.mounted) {
       Navigator.of(context).push(route);
