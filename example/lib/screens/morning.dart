@@ -256,7 +256,7 @@ class _MorningMeditationState extends State<MorningMeditation> {
               NeedlePointer(value: data.toDouble()/10.0)],
             annotations: <GaugeAnnotation>[
               GaugeAnnotation(widget: Container(child: 
-                 Text('${(data/10).ceil()}',style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold))),
+                 Text('${(data/10)}',style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold))),
                  angle: 90, positionFactor: 0.5
               )]
           )]),),);
