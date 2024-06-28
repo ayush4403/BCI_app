@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:mindwave_mobile2_example/screens/Games/BallGame.dart';
-import 'package:mindwave_mobile2_example/screens/Games/gameview.dart';
+
 
 class GameList extends StatefulWidget {
   const GameList({super.key});
@@ -18,45 +17,42 @@ class _GameListState extends State<GameList> {
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(30),
     ),
-    child: Container(
-      
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Image.asset(
-                  'assets/mindwave.jpg',
-                  height: 100,
-                  width: 100,
-                  fit: BoxFit.contain,
-                ),
-              
-              SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  "MindBall",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Image.asset(
+                'assets/mindwave.jpg',
+                height: 100,
+                width: 100,
+                fit: BoxFit.contain,
+              ),
+            
+           const SizedBox(width: 16),
+            const Expanded(
+              child: Text(
+                "MindBall",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              ElevatedButton(onPressed:()=>{
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>GameScreen()))
-              } , child: const Text('Play'))
-            ],
-          ),
-          SizedBox(height: 16),
-          Text(
-            "Game Description",
-            style: TextStyle(
-              fontSize: 16,
             ),
+            ElevatedButton(onPressed:()=>{
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>GameScreen()))
+            } , child: const Text('Play'))
+          ],
+        ),
+        const SizedBox(height: 16),
+        const Text(
+          "Game Description",
+          style: TextStyle(
+            fontSize: 16,
           ),
-        ],
-      ),
+        ),
+      ],
     ),
   );
 }

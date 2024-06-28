@@ -12,7 +12,6 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
-  DateTime? _selectedDay;
 
   final Map<DateTime, Color> _highlightedDates = {};
 
@@ -36,7 +35,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Monthly Analysis'),
-        actions: [
+        actions: const [
           SizedBox(
             width: 85,
           ),
@@ -54,22 +53,22 @@ class _CalendarScreenState extends State<CalendarScreen> {
             rowHeight: 60,
             daysOfWeekHeight: 60,
             headerStyle: HeaderStyle(
-              titleTextStyle: TextStyle(
+              titleTextStyle: const TextStyle(
                 color: Colors.blue,
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
               ),
-              formatButtonTextStyle: TextStyle(color: Colors.white),
+              formatButtonTextStyle: const TextStyle(color: Colors.white),
               formatButtonDecoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: Colors.blue, width: 2),
                   shape: BoxShape.rectangle),
-              leftChevronIcon: Icon(
+              leftChevronIcon: const Icon(
                 Icons.arrow_back,
                 color: Colors.white,
                 size: 24,
               ),
-              rightChevronIcon: Icon(
+              rightChevronIcon:const  Icon(
                 Icons.arrow_forward,
                 color: Colors.white,
                 size: 24,
@@ -140,7 +139,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               });
             },
           ),
-          SizedBox(height: 20),
+        const   SizedBox(height: 20),
           _buildColorLegend(),
         ],
       ),
@@ -161,10 +160,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
               height: 20,
               color: colors[index],
             ),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             Text(
               colorDescriptions[index],
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
             ),
           ],
         );

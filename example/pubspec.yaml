@@ -30,6 +30,10 @@ dependencies:
   go_router: ^14.2.0
   games_services: ^4.0.1
   syncfusion_flutter_gauges: ^26.1.38
+  timer_count_down: ^2.2.0
+  percent_indicator: ^4.2.3
+  linear_progress_bar: "^1.1.1"
+  pausable_timer: ^3.1.0+3
 
 dev_dependencies:
   integration_test:

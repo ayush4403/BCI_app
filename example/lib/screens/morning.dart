@@ -1,27 +1,34 @@
 import 'dart:async';
-import 'package:syncfusion_flutter_gauges/gauges.dart';
+import 'package:percent_indicator/percent_indicator.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mindwave_mobile2/enums/algo_state_reason.dart';
 import 'package:mindwave_mobile2/enums/headset_state.dart';
 import 'package:mindwave_mobile2/mindwave_mobile2.dart';
-
+import 'package:flutter/services.dart';
+import 'dart:io';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:mindwave_mobile2_example/screens/profile.dart';
 
 import 'package:mindwave_mobile2_example/util/snackbar_popup.dart';
-
+import 'package:syncfusion_flutter_gauges/gauges.dart';
+import 'package:timer_count_down/timer_count_down.dart';
+import 'package:pausable_timer/pausable_timer.dart';
 
 class MorningMeditation extends StatefulWidget {
-  final bool audiostatus;
-  final String? audiofile;
-  final int value;
+  
   const MorningMeditation(
-      {super.key, required this.audiostatus, required this.audiofile, required this.value});
+      {super.key,
+      });
 
   @override
   State<MorningMeditation> createState() => _MorningMeditationState();
 }
 
 class _MorningMeditationState extends State<MorningMeditation> {
+  double _progress = 0.0;
   bool isConnected = false;
   final MindwaveMobile2 headset = MindwaveMobile2();
   HeadsetState _headsetState = HeadsetState.DISCONNECTED;
@@ -32,40 +39,54 @@ class _MorningMeditationState extends State<MorningMeditation> {
   late StreamSubscription<HeadsetState>? _headsetStateSubscription;
   late StreamSubscription<Map>? _algoStateReasonSubscription;
   StreamSubscription<int>? _meditationStreamSubscription;
-  late Timer _timer;
-
+  Timer _timer = Timer(Duration.zero, () {});
+ 
+  //timerp = PausableTimer(const Duration(milliseconds: 100), () {});
   int c = 0;
   bool f = false;
   int ok = 0;
   bool showgraph = false;
+  
+  PausableTimer timerp = PausableTimer(const Duration(milliseconds: 100), () {
+    // You might want to put some default functionality here if needed.
+  });
+  bool op=true;
+  bool isPlaying=false;
   int sessionval = 1;
   bool showtimerandmusic = false;
   List<int> fixedSizeList = List.filled(40, 0);
-  int seconds = 5 * 60;
-  late Timer timer;
-
-  void startTimer() {
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (seconds > 0) {
-        setState(() {
-          seconds--;
-        });
-      } else {
-        timer.cancel();
-      }
-    });
-  }
-
-  void stopTimer() {
-    timer.cancel();
-  }
-
+  int c1 = 0;
+  int c2 = 0;
+  int c3 = 0;
+  int c4 = 0; 
+  double percent = 1;
+  
+  late AudioPlayer audioPlayer = AudioPlayer();
+   Uri audioUri = Uri.parse('D/Desktop/bciapp/example/assets/guided_1.mp3'); // Example local file path
+   //UriAudioSource audioSource = UriAudioSource(uri: audioUri);
   @override
   void initState() {
     super.initState();
+   
+    // percent = 1.0; // Reset percent to full at the start of each session
+    // _timer.cancel(); // Cancel any existing timer
+    // _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+    //   if (percent == 0) {
+    //     print("hello");
+    //     timer.cancel();
+        
+    //     setState(() {
+    //       percent = 0; // Ensure percent does not go below 0
+    //     });
+    //   } else if(percent>0.0) {
+    //     setState(() {
+    //       percent -= 0.1;
+    //       print("KSJDC $percent");
+    //     });
+    //   }
+    // });
     _headsetStateSubscription = headset.onStateChange().listen((state) {
-  
-  print("Your session time is : ${widget.value}");
+      //print("Your session time is : ${widget.value}");
       _headsetState = state;
       if (state == HeadsetState.DISCONNECTED) {
         headset.disconnect();
@@ -83,9 +104,52 @@ class _MorningMeditationState extends State<MorningMeditation> {
     //     setState(() {});
     //   }
     // });
-    
+
     print("current session : $sessionval");
   }
+void _updateProgress(double duration, bool ison) {
+  print("update");
+  const interval = Duration(milliseconds: 100); // Update every 100 milliseconds
+  final increment = (interval.inMilliseconds / 1000) / duration; // Calculate the increment per interval
+  print(ison);
+  timerp.cancel();
+  if (_progress == 0.0) { // Only reset progress if it's the start of the timer
+      _progress = 0.0; // Reset progress to 0
+    } // Cancel any existing timer
+   // Reset progress to 0
+  timerp = PausableTimer.periodic(interval, () {
+    if (!ison) {
+        print("stop");
+        timerp.pause();  // Stop the timer if the progress bar is not active
+        return;
+      }else{
+        
+    setState(() {
+      _progress += increment;
+      if (_progress >= 1.0) {
+        _progress = 1.0; // Cap the progress at 100%
+        timerp.start();
+      }
+    });
+      }
+  });
+  timerp.start();
+}
+
+// Future<void> playLocalAudio() async {
+//     String audioPath = 'assets/audio/audio.mp3'; // Path to your audio file in the assets folder
+//     ByteData data = await rootBundle.load(audioPath);
+//     List<int> bytes = data.buffer.asUint8List();
+
+//     Directory tempDir = await getTemporaryDirectory();
+//     String tempPath = '${tempDir.path}/audio_temp.mp3';
+
+//     File tempFile = File(tempPath);
+//     await tempFile.writeAsBytes(bytes);
+
+//     audioPlayer.play(tempPath, isLocal: true);
+//   }
+
 
   @override
   void dispose() {
@@ -94,6 +158,7 @@ class _MorningMeditationState extends State<MorningMeditation> {
     _meditationStreamSubscription?.cancel();
     _timer.cancel();
     headset.disconnect();
+    
     super.dispose();
   }
 
@@ -129,15 +194,21 @@ class _MorningMeditationState extends State<MorningMeditation> {
     }
   }
 
-  // void _addData(dynamic data) {
-  //   final userDoc = FirebaseFirestore.instance
-  //       .collection('Users')
-  //       .doc('Meditationdata')
-  //       .collection('Sessiondatas')
-  //       .doc('session2');
-  //   userDoc.set({'MeditationData': data}, SetOptions(merge: true));
-  //   print("Your data: $data");
-  // }
+  void _addData(dynamic data, int c1, int c2, int c3, int c4) {
+    final userDoc = FirebaseFirestore.instance
+        .collection('Users')
+        .doc('Meditationdata')
+        .collection('Sessiondatas')
+        .doc('session2');
+    userDoc.set({
+      'MeditationData': data,
+      "counter1": c1,
+      "counter2": c2,
+      "counter3": c3,
+      "counter4": c4
+    }, SetOptions(merge: true));
+    print("Your data: $data");
+  }
 
   // Future<void> fetchdata() async {
   //   final userDoc = FirebaseFirestore.instance
@@ -202,7 +273,7 @@ class _MorningMeditationState extends State<MorningMeditation> {
   //       headset.disconnect();
   //       print("Your session data: $fixedSizeList");
   //     }
-  //   });
+  //   }); 
   // }
 
   Widget buildConnectButton(BuildContext context) {
@@ -241,31 +312,66 @@ class _MorningMeditationState extends State<MorningMeditation> {
     );
   }
 
-  
-  Widget gaugebuild(BuildContext context,int data) {
+  Widget gaugebuild(BuildContext context, int data) {
     return Center(
-        child: Container(
-          child: SfRadialGauge(
-          axes: <RadialAxis>[
-            RadialAxis(minimum: 0, maximum: 10,
-            ranges: <GaugeRange>[
-              GaugeRange(startValue: 0, endValue: 3, color:Colors.green),
-              GaugeRange(startValue: 3,endValue: 7,color: Colors.orange),
-              GaugeRange(startValue: 7,endValue: 10,color: Colors.red)],
-            pointers: <GaugePointer>[
-              NeedlePointer(value: data.toDouble()/10.0)],
-            annotations: <GaugeAnnotation>[
-              GaugeAnnotation(widget: Container(child: 
-                 Text('${(data/10)}',style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold))),
-                 angle: 90, positionFactor: 0.5
-              )]
-          )]),),);
-      
+      child: Container(
+        child: SfRadialGauge(axes: <RadialAxis>[
+          RadialAxis(minimum: 0, maximum: 10, ranges: <GaugeRange>[
+            GaugeRange(startValue: 0, endValue: 3, color: Colors.green),
+            GaugeRange(startValue: 3, endValue: 7, color: Colors.orange),
+            GaugeRange(startValue: 7, endValue: 10, color: Colors.red)
+          ], pointers: <GaugePointer>[
+            NeedlePointer(value: data.toDouble() / 10.0)
+          ], annotations: <GaugeAnnotation>[
+            GaugeAnnotation(
+                widget: Container(
+                    child: Text('${(data / 10)}',
+                        style: TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.bold))),
+                angle: 90,
+                positionFactor: 0.5)
+          ])
+        ]),
+      ),
+    );
+  }
+
+  Widget buildtimer(BuildContext context) {
+    return Countdown(
+      seconds: 20,
+      build: (BuildContext context, double time) => Text(time.toString()),
+      interval: Duration(milliseconds: 100),
+      onFinished: () {
+        print('Timer is done!');
+      },
+    );
+  }
+
+ Widget progressbar(BuildContext context) {
+   
+    return  LinearProgressIndicator(
+            value: _progress,
+            backgroundColor: Colors.grey[300],
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+          );
+       
+  }
+
+  void togglePlayPause() {
+    if (isPlaying) {
+      audioPlayer.pause();
+    } else {
+       audioPlayer.play(AssetSource('guided_1.mp3'));
+    }
+    setState(() {
+      isPlaying = !isPlaying;
+      op=!op;
+      print(op);
+      _updateProgress(20, !op);
+    });
   }
 
   Widget Printdata(BuildContext context, String title, Stream<int> stream) {
-    
-
     return StreamBuilder<int>(
         stream: stream,
         builder: (context, snapshot) {
@@ -277,65 +383,110 @@ class _MorningMeditationState extends State<MorningMeditation> {
             return Container();
           }
           if (snapshot.hasData) {
+            print("indside");
             print("Your $title data is : ${snapshot.data} ");
+            if (snapshot.data! > 0 && snapshot.data! <= 40) {
+              c1++;
+            } else if (snapshot.data! > 40 && snapshot.data! <= 55) {
+              c2++;
+            } else if (snapshot.data! > 55 && snapshot.data! <= 70) {
+              c3++;
+            } else {
+              c4++;
+            }
+            _addData(snapshot.data, c1, c2, c3, c4);
           }
-          return gaugebuild(context,snapshot.data!);
+          return gaugebuild(context, snapshot.data!);
         });
   }
 
-  
-
   Widget displayavg(double avg) {
-    return Text("Your calmness level is: $avg",style: const TextStyle(color: Colors.white),);
-  }
-
-  
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(''),
-        actions: [
-          buildConnectButton(context),
-          SizedBox(
-            width: 85,
-          ),
-          IconButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ProfileScreen()));
-              },
-              icon: const Icon(Icons.person)),
-        ],
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: 20,
-          ),
-          buildStateWidget(context),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                showgraph = true;
-              });
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.yellowAccent,
-            ),
-            child: const Text('Start your session'),
-          ),
-
-          if (showgraph)
-            Printdata(context, "Meditation", headset.onAlgoMeditationUpdate()),
-            
-          
-        ],
-      ),
+    return Text(
+      "Your calmness level is: $avg",
+      style: const TextStyle(color: Colors.white),
     );
   }
+
+  
+  @override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: const Text('Morning Meditation'),
+      actions: [
+        buildConnectButton(context),
+        SizedBox(width: 85),
+        IconButton(
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
+          },
+          icon: const Icon(Icons.person)
+        ),
+      ],
+    ),
+    body: Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        SizedBox(height: 20),
+        buildStateWidget(context),
+        ElevatedButton(
+          onPressed: () {
+            setState(() {
+              showgraph = true;
+              // isPlaying = !isPlaying;
+              // op=!op;
+              // _updateProgress(20, !op);
+              
+    
+            });
+          },
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+          child: const Text('Start your session', style: TextStyle(color: Colors.white)),
+        ),
+           if(showgraph) Printdata(context, "Meditation", headset.onAlgoMeditationUpdate()),
+           if (showgraph) progressbar(context),
+        
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
+          children: [
+            // ElevatedButton(
+            //   onPressed: (){
+            //     setState(() {
+            //       op=true;
+            //        audioPlayer.play(AssetSource('guided_1.mp3'));
+            //     });
+            //     _updateProgress(20, op);
+            //     print("inside start $op");
+            //   },
+            //   child: Text('Start Progress'),
+            //   style: ElevatedButton.styleFrom(primary: Colors.green),
+            // ),
+            // ElevatedButton(
+            //   onPressed: (){
+            //     setState(() {
+            //       op=false;
+            //       audioPlayer.pause();
+                  
+            //     });
+            //      _updateProgress(20, op);
+            //     print(op);
+            //   },
+            //   child: Text('Pause Progress'),
+            //   style: ElevatedButton.styleFrom(primary: Colors.red),
+              
+            // ),
+
+              ElevatedButton.icon(
+              onPressed: togglePlayPause,
+              icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
+              label: Text(''),
+            ),
+          
+          ],
+        ),
+      ],
+    ),
+  );
+}
 }

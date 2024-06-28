@@ -114,9 +114,8 @@ class _SessionSelectionPageState extends State<SessionSelectionPage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (ctx) => MorningMeditation(
-                                          audiostatus: playMusic,
-                                          audiofile: selectedMusicFile ?? '', value: selectedDuration ?? 40,
+                                    builder: (ctx) => const MorningMeditation(
+                                          
                                           
                                         )));
                                         //Navigator.pop(context);

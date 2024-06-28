@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:mindwave_mobile2/enums/algo_state_reason.dart';
+// import 'package:mindwave_mobile2/enums/algo_state_reason.dart';
 import 'package:mindwave_mobile2/enums/headset_state.dart';
 import 'package:mindwave_mobile2/mindwave_mobile2.dart';
 import 'package:mindwave_mobile2_example/util/snackbar_popup.dart';
 
 class GameScreen extends StatefulWidget {
+  const GameScreen({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _GameScreenState createState() => _GameScreenState();
 }
 
@@ -15,8 +18,8 @@ class _GameScreenState extends State<GameScreen>
   bool isConnected = false;
   final MindwaveMobile2 headset = MindwaveMobile2();
   HeadsetState _headsetState = HeadsetState.DISCONNECTED;
-  AlgoState _algoState = AlgoState.INITED;
-  AlgoReason _algoReason = AlgoReason.SIGNAL_QUALITY;
+  // AlgoState _algoState = AlgoState.INITED;
+  // AlgoReason _algoReason = AlgoReason.SIGNAL_QUALITY;
   int dataunits = 0;
 
   late StreamSubscription<HeadsetState>? _headsetStateSubscription;
@@ -24,7 +27,7 @@ class _GameScreenState extends State<GameScreen>
   StreamSubscription<int>? _meditationStreamSubscription;
   late StreamController<double> _streamController;
   late AnimationController _controller;
-  late Animation<double> _animation;
+  // late Animation<double> _animation;
   double _currentValue = 0.5;
   Widget buildConnectButton(BuildContext context) {
     return Row(children: [
@@ -56,7 +59,7 @@ class _GameScreenState extends State<GameScreen>
     _streamController = StreamController<double>();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 300),
       upperBound: 1,
       lowerBound: 0
     );
@@ -72,9 +75,6 @@ class _GameScreenState extends State<GameScreen>
     
   }
 
-  void _updateBallPosition(double value) {
-    _streamController.add(value);
-  }
 
   @override
   void dispose() {

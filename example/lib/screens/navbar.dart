@@ -2,8 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:mindwave_mobile2_example/graphs/resources/app_colors.dart';
+import 'package:mindwave_mobile2_example/screens/activities.dart';
 import 'package:mindwave_mobile2_example/screens/bluetooth_off_screen.dart';
 import 'package:mindwave_mobile2_example/screens/gamelist.dart';
+import 'package:mindwave_mobile2_example/screens/morning.dart';
+import 'package:mindwave_mobile2_example/screens/newpage.dart';
+import 'package:mindwave_mobile2_example/screens/profile.dart';
 import 'package:mindwave_mobile2_example/screens/scan_screen.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
@@ -37,13 +41,13 @@ class _NavBarState extends State<NavBar> {
   }
 
   static const List<Widget> _pages = [
-    Icon(
-      Icons.home,
-      size: 150,
-    ),
-   GameList(),
-    Icon(Icons.local_activity, size: 150),
-    ScanScreen()
+    Newpage1(),
+   ScanScreen(),
+    ActivitiesScreen(),
+    
+    
+    ProfileScreen(),
+
   ];
   Widget NavBarWidget() {
     return Scaffold(
@@ -69,7 +73,7 @@ class _NavBarState extends State<NavBar> {
               BottomNavigationBarItem(
                   icon: Icon(Icons.local_activity), label: 'Activities'),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.bluetooth), label: 'Bluetooth'),
+                  icon: Icon(Icons.person), label: 'Profile'),
             ],
             currentIndex: _selectedindex,
             onTap: _onItemTapped,

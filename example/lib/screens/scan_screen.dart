@@ -155,16 +155,7 @@ class _ScanScreenState extends State<ScanScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Bluetooth Devices'),
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ProfileScreen()));
-              },
-              icon: const Icon(Icons.person)),
-        ],
+        
       ),
       body: RefreshIndicator(
         onRefresh: onRefresh,
